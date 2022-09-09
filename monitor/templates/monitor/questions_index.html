@@ -1,0 +1,76 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="/static/monitor/css/question_index.css">
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-10 col-xl-8">
+                    <div class="card bg-pattern">
+
+                        <div class="card-body p-4">
+
+                            <div class="text-center w-75 m-auto">
+                                <div class="auth-logo">
+                                    <a href="#" class="logo logo-dark text-center">
+                                    </a>
+
+                                    <a href="#" class="logo logo-light text-center">
+                                    </a>
+                                </div>
+
+                                <h2 class="text-muted mb-4 mt-3"> START DEVELOPING YOUR QUESTIONS </h2>
+                            </div>
+
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-lg-8 col-sm-12" style="background-color: black; height: 100%;">
+                                        <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
+                                            Latest Questions
+                                        </p>
+                                        <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%;">
+                                            {% for a in data %}
+                                            <li>
+                                                <a class="header-cta__button ques_class" id="{{a.id}}" href="#"> {{a.question_title}}
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                            <li style="margin-bottom:10px">
+                                                <a class="header-cta__button" href="{% url 'all_question' %}">More Questions
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                        <a class="header-cta__button" href="/develop_questions/"> New Form </a>
+                                    </div>
+                                </div>
+                          </div>
+                        </div> <!-- end card-body -->
+                    </div>
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+
+
+
+
+<script type="text/javascript">
+    
+    $(document).ready(function(){
+
+        $('.ques_class').on('click', function(){
+            var idd = $(this).id
+            location.href = '/question_details/' + idd
+        })
+    })
+</script>
+{% endblock %}

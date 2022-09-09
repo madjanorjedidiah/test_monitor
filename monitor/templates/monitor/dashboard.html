@@ -1,0 +1,157 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block content %}
+<div class="d-justify-content-center">
+	<div class="text-center topic"> USERS DATA </div>
+	<div class="card bg-pattern col-md-12 d-block p-2">
+		<div class="table-responsive">
+	        <table id="example1" class="display cell-border" style="width:100%">
+	            <thead>
+	                <tr>
+	                    <th>Name</th>
+	                    <th>Email</th>
+	                    <th>Phone Number</th>
+	                    <th>User Role</th>	                    
+	                </tr>
+	            </thead>
+	            <tbody>                                        
+	            	{% for a in data_table %}
+	                <tr class="clickable" id={{sb_list.pk}}>
+	                    <td>{{a.first_name}} {{a.last_name}}</td>
+	                    <td>{{a.email}}</td>
+	                    <td>{{a.contact}}</td>
+	                    <td>{{a.account_type}}</td>
+	                </tr>
+	                {% endfor %}
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+	<br>
+
+	
+	<div class="d-inline-block col-md-4">
+		<div class="col-md-12 text-center topic"> Summary of Roles </div>
+		<div class="card bg-pattern col-md-12 d-block">
+			<div class="table-responsive">
+		        <table id="example2" class="display cell" style="width:97%">
+		            <thead>
+		                <tr>
+		                	<th>Roles </th>
+		                	<th>Count </th>
+		                </tr>
+		            </thead>
+		            <tbody>  
+		            {% for key, value in role.items %}                                       
+		            	<tr>
+		                	<td>{{key}}</td>
+		                	<td> {{value}} </td>
+		                </tr>
+		                
+		            {% endfor %}
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+		<br>
+		<div class="col-md-12 text-center topic"> Summary Gender </div>
+		<div class="card bg-pattern d-block col-md-12">
+			<div class="table-responsive">
+		        <table id="example3" class="display cell" style="width:97%">
+		            <thead>
+		                <tr>
+		                	<th>Gender </th>
+		                	<th>Count </th>
+		                </tr>
+		            </thead>
+		            <tbody>                                        
+		            	<tr>
+		                	<td>Male </td>
+		                	<td> {{count_male}} </td>
+		                </tr>
+		                <tr>
+		                    <td> Female </td>
+		                    <td> {{count_female}} </td>
+		                </tr>
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+	</div>
+
+	<div class="d-inline-block col-md-8 float-right">
+		<div class="col-md-12 text-center topic"> Staff Members </div>
+		<div class="d-justify-content-center card bg-pattern d-block col-md-12">
+			<div class="container_card">
+				{% for aa in card_radio %}
+			    <input type="radio" name="dot" id="{{aa}}">
+			    {% endfor %}
+			    <div class="main-card">
+			    	{% for aa in card_data %}
+			      <div class="cards">
+			      	{% for aaa in aa %}
+			        <div class="card">
+			         <div class="content">
+			           <div class="img">
+			            	<img src="/media/{{aaa.image}}" alt="">
+			           </div>
+			           <div class="details">
+			             <div class="name">{{aaa.name}}</div>
+			             <div class="job">{{aaa.role}}</div>
+			           </div>
+			           <div class="media-icons">
+			             <a href="#"><i class="fab fa-facebook-f"></i></a>
+			             <a href="#"><i class="fab fa-twitter"></i></a>
+			             <a href="#"><i class="fab fa-instagram"></i></a>
+			             <a href="#"><i class="fab fa-youtube"></i></a>
+			           </div>
+			         </div>
+			        </div>
+			        {% endfor %} 
+			      </div>
+			      {% endfor %} 
+			    </div>
+			    <div class="button">
+			    	{% for aa in card_radio %}
+			      <label for="{{aa}}" class="item {{aa}}"></label>
+			      {% endfor %}
+			    </div>
+			  </div>
+		</div>
+	</div>
+</div>
+			
+	
+</div>
+
+<script type="text/javascript">
+	$('.item').first().addClass('active')
+
+	$(document).ready(function() {
+	    $('#example1').DataTable({
+	    	'pageLength' : 5,
+	    	'lengthChange': false
+	    });
+
+	    $('#example2').DataTable({
+	    	'lengthChange': false,
+	    	'searching': false,
+	    	'paging' : false,
+	    	"bInfo": false,
+	    	// 'scrollX': true,  
+	    });
+
+	    $('#example3').DataTable({
+	    	'lengthChange': false,
+	    	'searching': false,
+	    	'paging' : false,
+	    	"bInfo": false,
+	    	// 'scrollX': true,  
+	    });
+	});
+		    
+
+</script>
+{% endblock %}

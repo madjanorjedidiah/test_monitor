@@ -1,0 +1,138 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block content %}
+<div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-pattern">
+
+                        <div class="card-body p-4">
+
+                            <div class="text-center w-75 m-auto">
+                                <div class="auth-logo">
+                                    <a href="#" class="logo logo-dark text-center">
+                                        <span class="logo-lg">
+                                            <!-- <img src="{% static 'app/images/logo-dark.png' %}" alt="" height="22"> -->
+                                        </span>
+                                    </a>
+
+                                    <a href="#" class="logo logo-light text-center">
+                                        <span class="logo-lg">
+                                            <!-- <img src="{% static 'app/images/logo-light.png' %}" alt="" height="22"> -->
+                                        </span>
+                                    </a>
+                                </div>
+                                {% block flash %}
+                                <ul class="messages" id="messages-list">
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    <li style="list-style-type: none;">
+                                        {% if message.tags %}
+                                        <div class="alert alert-{{ message.tags }} msg fade show" role="alert">{{ message }}</div>
+                                        {% else %}
+                                        <div class="alert alert-info msg fade show" role="alert">{{ message }}</div>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                                {% endblock %}
+
+                                <p class="text-muted mb-4 mt-3"> Update Staff User's Info.</p>
+                            </div>
+
+                            {% if form_details.authentication_failed %}
+                            <div class="alert alert-danger">
+                                Invalid login details
+                            </div>
+                            {% endif %}
+
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <select class="form-control" id="title" name="title">
+                                        <option value="{{u_data.title}}">{{u_data.title}}</option>
+                                        <option value="Mr.">Mr.</option>
+                                        <option value="Mrs">Mrs</option>
+                                        <option value="Dr.">Dr.</option>
+                                        <option value="Prof">Prof</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <input type="text" class="form-control" id="name" name="name" required=""
+                                        placeholder="Enter your name" value="{{u_data.name}}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <select class="form-control" id="gender" name="gender">
+                                        <option value="{{u_data.gender}}">{{u_data.gender}}</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <input type="text" class="form-control" id="department" name="department" required=""
+                                        placeholder="Enter your department" value="{{u_data.department}}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <select class="form-control" id="role" name="role">
+                                        <option value="{{u_data.role}}">{{u_data.role}}</option>
+                                        <option value="Project Manager">Project Manager</option>
+                                        <option value="Technical Manager">Technical Manager</option>
+                                        <option value="Software Developer">Software Developer</option>
+                                        <option value="Data Engineer">Data Engineer</option>
+                                        <option value="Sales Manager">Sales Manager</option>
+                                        <option value="Product Manager">Product Manager</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <input type="text" class="form-control" id="email" name="email" required=""
+                                        placeholder="Enter your email" value="{{u_data.email}}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <input type="text" class="form-control" id="phone_number" name="phone_number" required=""
+                                        placeholder="Enter your phone number" value="{{u_data.phone_number}}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <!-- <label for="username">Username</label> -->
+                                    <input type="date" class="form-control" id="last_cert_date" name="last_cert_date" required=""
+                                        placeholder="Enter your last certification date" value="{{u_data.last_cert_date |date:'Y-m-d'}}">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <img src="/media/users/{{u_data.image}}" width="100%" height="100%">
+                                    <input type="file" class="form-control" id="image" name="image" required=""
+                                        placeholder="Enter your image" value="{{u_data.image}}">
+                                </div>
+
+                   
+                                <div class="form-group mb-0 text-center">
+                                    <button class="btn btn-primary btn-block" type="submit"> Submit </button>
+                                </div>
+                            </form>
+
+                        </div> <!-- end card-body -->
+                    </div>
+                    <!-- end card -->
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <p> <a href="auth-recoverpw.html" class="text-white-50 ml-1">Forgot your password?</a></p>
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row -->
+
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+
+{% endblock %}

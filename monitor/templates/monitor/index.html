@@ -1,0 +1,38 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block content %}
+
+<div class="container1">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-pattern">
+
+                        <div class="card-body p-4">
+
+                            <div class="text-center w-75 m-auto">
+                                <h3 class="text mb-4 mt-3">Welcome to test monitor.</h3>
+                            </div>
+
+                            <div>
+                            	<p> This app is to help users (questioners) write out tests for their candidates and automate the delivery of marks. It comes with a monitoring bit which monitors candidates screen and takes snapshots of them during the execution of the assignment.</p>
+                            </div>
+
+                            <div class="row">
+                            	<p class="col-md-12 mt-3"> Choose that which best describes your current state. I you are already a user, you may sign in. Otherwise, sign up with us.</p>
+                            	<div class="col-md-6 mt-3 d-inline-block">
+                            		<a href="{% url 'login' %}" style="padding:10px; border-radius: 5px; background-color: #3283f6; color: white;"> Sign In </a>
+                            	</div>
+                            	<div class="col-md-6 mt-3 d-inline-block">
+                            		<a href="{% url 'signup' %}" style="margin-top: -10px; padding:10px; border-radius: 5px; background-color: #3283f6; color: white; float: right;"> Sign Up </a>
+                            	</div>
+                            </div>                                                                         
+                        </div> <!-- end card-body -->
+                    </div>
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+
+{% endblock %}

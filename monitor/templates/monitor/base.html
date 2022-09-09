@@ -1,0 +1,195 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>TEST MONITOR APP - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="TEST MONITOR APP - HOME." name="description" />
+    <meta content="Sav Systems" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'monitor/images/favicon.ico' %}">
+
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    
+    <!-- third party css -->
+    <link href="/static/monitor/bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/static/monitor/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/static/monitor/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+        rel="stylesheet" type="text/css" />
+    <!-- third party css end -->
+
+    <!-- App css -->
+    <link href="/static/monitor/css/bootstrap-creative.min.css" rel="stylesheet" type="text/css"
+        id="bs-default-stylesheet" />
+    <link href="/static/monitor/css/app-creative.css" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
+
+    <!-- icons -->
+    <link href="/static/monitor/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+
+    <!-- Include the plugin's CSS and JS: -->
+    <link rel="stylesheet" href="/static/monitor/css/main.css" type="text/css" />
+    <link rel="stylesheet" href="/static/monitor/css/bootstrap-multiselect.css" type="text/css" />
+    <script src="/static/monitor/js/jquery-3.6.0.js"></script>
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+    <link href="/static/monitor/css/datatables.css" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
+    {% block css %}
+    {% endblock %}
+
+</head>
+
+
+<body class="loading" data-layout-mode="horizontal"
+    data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "topbar": {"color": "dark"}, "showRightSidebarOnPageLoad": true}'>
+
+    <!-- Begin page -->
+    <div id="wrapper">
+        <!-- Topbar Start -->
+        <div class="navbar-custom">
+            <div class="container-fluid">
+                <ul class="list-unstyled topnav-menu float-right mb-0">
+
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-toggle="fullscreen"
+                            href="#">
+                            <i class="fe-maximize noti-icon"></i>
+                        </a>
+                    </li>
+
+                    <li class="dropdown notification-list topbar-dropdown">
+                        <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light"
+                            data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <span class="pro-user-name ml-1">
+                                Welcome {{ user.get_username }}
+                            </span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                            <div class="dropdown-divider"></div>
+                            <a href="{% url 'logout' %}" class="dropdown-item notify-item">
+                                <i class="fe-log-out"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled topnav-menu mb-0">
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'home' %}"> Home </a>
+                    </li>
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'dashboard' %}"> Dashboard </a>
+                    </li>
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'profile' %}"> Profile </a>
+                    </li>
+                </ul>
+
+                <!-- LOGO -->
+                <div class="logo-box">
+                    <a href="index.html" class="logo logo-dark text-center">
+                        <span class="logo-sm">
+                            <img src="{% static 'monitor/images/logo-light.png' %}" alt="" height="20">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{% static 'monitor/images/logo-light.png' %}" alt="" height="20">
+                        </span>
+                    </a>
+                    <a href="/" class="logo logo-light text-center">
+                        <span class="logo-sm">
+                            <img src="{% static 'monitor/images/logo-light.png' %}" alt="" height="20">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="{% static 'monitor/images/logo-light.png' %}" alt="" height="20">
+                        </span>
+                    </a>
+                </div>
+
+                <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+                    <li>
+                        <button class="button-menu-mobile waves-effect waves-light">
+                            <i class="fe-menu">
+                                ::before
+                            </i>
+                        </button>
+                    </li>
+
+                    <li>
+                        <!-- Mobile menu toggle (Horizontal Layout)-->
+                        <a class="navbar-toggle nav-link" data-toggle="collapse" data-target="#topnav-menu-content">
+                            <div class="lines">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </a>
+                        <!-- End mobile menu toggle-->
+                    </li>
+
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <!-- end Topbar -->
+
+        
+                <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                    <div class="simplebar-scrollbar"
+                        style="width: 0px; display: none; transform: translate3d(0px, 0px, 0px);"></div>
+                </div>
+                <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
+                    <div class="simplebar-scrollbar"
+                        style="height: 25px; transform: translate3d(0px, 0px, 0px); display: block;"></div>
+                </div>
+            </div>
+            <!-- Sidebar -left -->
+
+        </div>
+
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+
+            <div class="content">
+                {% block content %}
+                {% block flash %}
+                {% endblock %}
+                <!-- block content goes here for template inheritance -->
+                {% endblock %}
+            </div> <!-- content -->
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+
+        </div>
+        <!-- END wrapper -->
+
+        <!-- Vendor js -->
+        <script src="/static/monitor/js/vendor.min.js"></script>
+        <script src="/static/monitor/js/bootstrap.js"></script>
+
+        <!-- third party js -->
+        <script src="/static/monitor/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="/static/monitor/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="/static/monitor/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/static/monitor/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+        <!-- third party js ends -->
+
+        <!-- Tickets js -->
+        <script src="static/monitor/js/pages/tickets.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <!-- App js -->
+        <script src="/static/monitor/js/app.min.js"></script>
+
+</body>
+
+</html>

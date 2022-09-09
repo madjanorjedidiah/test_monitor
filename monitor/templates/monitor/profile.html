@@ -1,0 +1,206 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+{% block css %}
+<style type="text/css">
+	.block.block--frame {
+        border-width: 0.25rem;
+        border-style: solid;
+        padding: 2rem;
+        border-color: #EFF0E7;  
+    }
+
+    .grid.grid--major-left > * {
+        overflow: hidden;
+        max-width: 100% !important;
+    }
+
+    .section-intro.section-intro--ultra-minimal.section-intro--divider {
+        border-bottom: 0;
+        position: relative;
+    }
+
+    .section-intro.section-intro--divider {
+        border-bottom-color: #EFF0E7;
+    }
+
+    .sidebar .grid__sidebar .block.contact-info .block__content {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+    }
+
+    .sidebar .grid__sidebar .block.contact-info .block__content .contact-info__content, .sidebar .grid__sidebar .block.contact-info .block__content .contact-info__image {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 100%;
+        flex: 1 1 100%;
+        margin: 0;
+    }
+
+    .dl {
+        margin-top: 0;
+        margin-bottom: 2rem;
+    }
+    
+    .social-media-links.social-media-links--icons-only {
+        margin-bottom: 0;
+    }
+
+    .social-media-links.social-media-links--icons-only ul {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        /* display: flex; */
+        /* -webkit-box-orient: horizontal; */
+        /* -webkit-box-direction: normal; */
+        -ms-flex-flow: row wrap;
+        flex-flow: row wrap;
+    }
+
+    .social-media-links.social-media-links--icons-only ul li {
+        margin-bottom: 1.5rem;
+        margin-right: 1.5rem;
+    }
+
+    li {
+        list-style:none;
+        background-image:none;
+        background-repeat:none;
+        background-position:0; 
+    }
+    ul
+    {
+        list-style-type:none;
+        padding:0px;
+        margin:0px;
+    }
+
+
+
+
+	.rouded{
+		margin-bottom: 40px;
+	}
+
+
+		body {
+		    background: #f9f9f9
+		}
+
+		.name {
+		    color: blue
+		}
+
+		.work {
+		    /*font-weight: bold;*/
+		    font-size: 15px
+		}
+
+		.about span {
+		    font-size: 13px
+		}
+
+		.v-profile {
+		    color: blue;
+		    cursor: pointer
+		}
+
+		.box {
+		    -webkit-box-shadow: 13px 12px 5px -10px rgba(196, 194, 196, 0.72);
+		    -moz-box-shadow: 13px 12px 5px -10px rgba(196, 194, 196, 0.72);
+		    box-shadow: 13px 12px 5px -10px rgba(196, 194, 196, 0.72)
+		}
+
+		.col-md-3 {
+		    margin-top: 10px
+		}
+
+        .grid__sidebar {
+            margin-bottom: 10px;
+        }
+
+        .block--frame {
+            background-color: white;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+	<div class="d-flex justify-content-center">
+
+        {% if data %}
+		<div class="grid__sidebar col-lg-4">
+            <div class="block contact-info block--frame col-md-12 col-sm-9">
+                <div class="block__intro">
+                    <div class="section-intro section-intro--ultra-minimal section-intro--divider">
+                    </div>
+                </div>
+                <div class="block__content">
+                    <div class="contact-info__content">
+                        <dl class="">
+                            <dt class="contact-info__label contact-info__label--name">
+                                Name
+                            </dt>
+                            <dd class="contact-info__label contact-info__value--name ">
+                                <div class="field field--name-field-name field--type-name field--label-hidden field__item">
+                                    <a href="https://www.ug.edu.gh/geography/staff/alex-barimah-owusu"> {{data.first_name}} {{data.last_name}} </a>
+                                </div>
+                            </dd>
+                            <dt class="contact-info__label contact-info__label--jobtitle">
+                                User Role
+                            </dt>
+                            <dd class="contact-info__label contact-info__value--jobtitle contact-info__value--last-of-group">
+                                <div class="field field--name-field-job-titles field--type-text field--label-hidden field__items">
+                                    <div class="field__item">
+                                        {{data.account_type}}
+                                    </div>                                  
+                                </div>
+                            </dd>
+                            <dt class="contact-info__label contact-info__label--jobtitle">
+                                Email
+                            </dt>
+                            <dd class="contact-info__label contact-info__value--email ">
+                                <div class="field field--name-field-email field--type-email field--label-hidden field__item">
+                                    <a href="mailto:{{data.email}}">
+                                        {{data.email}}
+                                    </a>
+                                </div>
+                            </dd>
+                            <dt class="contact-info__label contact-info__label--phone">
+                                Phone Number
+                            </dt>   
+                            <dd class="contact-info__label contact-info__value--phone contact-info__value--last-of-group">
+                                <div class="field field--name-field-phone field--type-telephone field--label-hidden field__item">
+                                    <a href="tel:{{data.contact}}">
+                                        {{data.contact}}
+                                    </a>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <a href="{% url 'userbio' %}" style="margin-top: -10px; padding:10px; border-radius: 5px; 
+                    background-color: #3283f6; color: white;"> Update Profile </a>
+
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+        <div class="grid__sidebar col-lg-4">
+            You have not yet updated your profile. Please do so for better services.
+            <br><br>
+
+            <a href="{% url 'userbio' %}" style="margin-top: -10px; padding:10px; border-radius: 5px; 
+            background-color: #3283f6; color: white;"> Update Profile </a>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

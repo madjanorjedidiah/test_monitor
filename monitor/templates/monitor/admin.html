@@ -1,0 +1,119 @@
+{% extends "auth_now/base.html"%}
+{% load static %}
+
+
+{% block content %}
+
+                            
+<div class="d-flex justify-content-center" style="margin: 0">
+    <div class="table-responsive">
+        <table id="example1" class="display cell-border" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Title </th>
+                    <th>Staff Name</th>
+                    <th>Gender</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Certification</th>
+                    <th>Image</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>                                        
+            	{% for a in data %}
+                <tr class="clickable">
+                    <td>{{a.title}}</td>
+                    <td>{{a.name}}</td>
+                    <td>{{a.gender}}</td>
+                    <td>{{a.email}}</td>
+                    <td>{{a.phone_number}}</td>
+                    <td>{{a.department}}</td>
+                    <td>{{a.role}}</td>
+                    <td>{{a.last_cert_date}}</td>
+                    <td>{{a.image}}</td>
+                    <td><a href="/staff_update/{{a.id}}" style="padding:10px; background-color: #45bcde; color:white;"> Update </a></td>
+                  <td><span class="check">
+                          <label>
+                              <span class="checkbox-material"></span>
+                              <button type='button' id='{{a.pk}}' class=' but' style='border: none;'>
+                             <i class='fa fa-window-close'></i></button>
+                          </label>
+                      </span>
+                  </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+            <h4 class="modal-title">Action Alert</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="md-form mb-4">
+                <p id="dell">
+                    You are about to delete this user from the group
+                </p>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="cancel" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" id="ok" class="btn btn-danger" value="" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- ENDS $dashboard_content -->
+</div>
+</div>
+
+<!-- <script src="{% static 'backend/main.js' %}"></script>
+<script src="{% static 'backend/ajax.js' %}"></script> -->
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable({
+        // pageLength : 5,
+    });
+});
+
+
+
+
+   $('#cancel').click(function(){
+    return
+    })
+
+
+  $('.but').click(function(){
+        idd = $(this).attr('id')
+         $('#myModal').modal('toggle')
+        $('#myModal').modal('show')
+        // alert('You are about to delete this user from the group')
+        $('#ok').click(function(){
+
+        $.get('/deleteuser/'+ idd, function(data) {
+           if(data=="done"){
+                $('#dell').css('display', 'none')
+                window.location.href="/admin_level"
+                }
+            })
+       })
+    })
+
+</script>
+
+{% endblock %}
