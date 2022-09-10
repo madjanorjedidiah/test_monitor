@@ -122,16 +122,17 @@
 }
 
 
-.tooltip {
+.tooltips {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted black;
+  width: 40px;
+  /*border-bottom: 1px dotted black;*/
 }
 
-.tooltip .tooltiptext {
+.tooltips .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: black;
+  background-color: grey;
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -142,16 +143,93 @@
   left: 110%;
 }
 
-.tooltip .tooltiptext::after {
+.tooltips .tooltiptext::after {
   content: "";
   position: absolute;
-  top: 50%;
-  right: 100%;
+  /*right: 100%;*/
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent black transparent transparent;
+  border-color: transparent grey transparent transparent;
 }
-.tooltip:hover .tooltiptext {
+
+.tooltips:hover .tooltiptext {
   visibility: visible;
+}
+
+
+#ques_title {
+    font-size: 20px;
+}
+
+/*.ques_buts {
+    padding: 15px
+}*/
+
+
+select {
+  background-color: white;
+  border: thin solid grey;
+  border-radius: 4px;
+  display: inline-block;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select.arrows {
+  background-image:    url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAA3klEQVRIS+3VMU9CMRTF8d8zBL+aizoQFhx0kUk33RzdYMNFXUFnYeGrYYyaJiUxJHDLSxodbNKpfeffc9/pbaPyaCrr+3OA++z4rtT5Pg5GuMnCY9yWQEoBE1xhlUUP8YDrCBIB0vojLvGO0yz4hm4JJAKcYYoPHGOZAUdYoIMBXrc5iQAHeMlzviFygj7O8dkWEJU4XI8chALRhn9AVKHf70VRTHu4wFfbmKZLNKt50dLBnna0imcMd/2I0phWa3Y/D1e1Xa9BCZJG0VuQNpaWKMx72xS1Fl5/WN3BN+AgJhnZQlq4AAAAAElFTkSuQmCC');
+  background-position: calc(100% - .5rem), 100% 0;
+  background-size:  1.5em 1.5em;
+  background-repeat: no-repeat;
+}
+
+select.arrows:focus {
+  border-color: blue;
+  outline: 0;
+}
+
+
+.checkbx {
+    border-radius: 25px;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.add_option_but{
+    border-radius: 5px;
+    width: 100px;
+    padding: 3px;
+    margin-left: 10px;
+}
+
+
+.multiple_text_input {
+    border: none;
+    margin-bottom: 10px;
+    /*padding: 5px;*/
+    /*border-bottom-style: groove;*/
+}
+
+
+.multiple_text_input:focus {
+    outline: none;
+    border-bottom-style: groove;
+}
+
+
+.fill_in_text {
+    margin-left: 10px;
+}
+
+
+.essay_text {
+     margin-left: 10px;
 }

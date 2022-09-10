@@ -9,12 +9,10 @@
 
 {% block content %}
 <div class="container">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" id="main_ques_container">
                 <div class="col-md-10 col-lg-10 col-xl-8">
                     <div class="card bg-pattern">
-
                         <div class="card-body p-4">
-
                             <div class="text-center w-75 m-auto">
                                 <div class="auth-logo">
                                     <a href="#" class="logo logo-dark text-center">
@@ -23,33 +21,56 @@
                                     <a href="#" class="logo logo-light text-center">
                                     </a>
                                 </div>
-
                                 <h2 class="text-muted mb-4 mt-3"> DEVELOP YOUR QUESTIONS HERE </h2>
                             </div>
-
-
-                            <div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-sm-12" style="background-color: black; height: 100%; margin-bottom: 20px;">
-                                        <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
-                                            Questions
-                                        </p>
-                                    </div>
-
-                                    <form method="post">
-                                            {% csrf_token %}
-                                            <label> Question Title </label>
-                                            <input type="text" name="question_title">
-                                        </form>
-
-                                        <div class="add_question tooltip">
-                                            <button class="" style="border-radius: 15px; width: 25px"> + </button>
-                                             <span class="tooltiptext">Tooltip text</span>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12" style="background-color: black; height: 100%; margin-bottom: 20px;">
+                                    <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
+                                        Questions
+                                    </p>
                                 </div>
-                          </div>
+
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <label id="ques_title"> Question Title </label>
+                                    <input type="text" name="question_title" class="form-control">
+                                    <br>
+                                </form>
+                            </div>
                         </div> <!-- end card-body -->
                     </div>
+
+                    <div class="card bg-pattern" id="mainsection1">
+                        <div class="card-body p-4 row">
+                            <div class="col-md-8">
+                                <input type="text" name="question_title" class="form-control" placeholder="Question">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control arrows" id="answer_choice">
+                                    <option value="multiple"> Multiple Questions </option>
+                                    <option value="fill_in"> Fill in Questions </option>
+                                    <option value="essay"> Essay Questions </option>
+                                </select>
+                                <br>
+                            </div>
+                            <div id="type_of_quuestions" class="row">
+                                <input type="checkbox" name="" class="checkbx form-control">
+                                <input type="text" name="" class="multiple_text_input col-md-11" placeholder="Option ">
+                                <br>
+                                <button class="add_option_but"> add option </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-pattern ques_buts">
+                        <div class="card-body">
+                            <div class="add_question tooltips">
+                                <button class="" id="but_click" style="border-radius: 15px; width: 25px"> + </button>
+                                 <span class="tooltiptext"> New Question</span>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div> <!-- end col -->
             </div>
             <!-- end row -->
@@ -60,12 +81,31 @@
 
 <script type="text/javascript">
     
-    // $(document).ready(function(){
+    document.getElementById("but_click").onclick = function() {
+        var container = document.getElementById("main_ques_container");
+        var section1 = document.getElementById("mainsection1");
+        var section2 = document.getElementById("mainsection2");
+        var section3 = document.getElementById("mainsection3");
+        container.appendChild(section.cloneNode(true));
+    }
 
-    //     $('.ques_class').on('click', function(){
-    //         var idd = $(this).id
-    //         location.href = '/question_details/' + idd
-    //     })
-    // })
+    document.getElementById("answer_choice").onclick = function() {
+        var selectd = document.getElementById("answer_choice").value
+        var question_type_container = document.getElementById("type_of_quuestions");
+        if (selectd == 'multiple'){
+            question_type_container.innerHTML = 
+                //  multiple choice 
+                `<input type="checkbox" name="" class="checkbx form-control">
+                <input type="text" name="" class="multiple_text_input col-md-11" placeholder="Option ">
+                <br>
+                <button class="add_option_but"> add option </button>`                
+        }
+        else if (selectd == 'fill_in'){
+            question_type_container.innerHTML = `<input type="text" name="" class="multiple_text_input fill_in_text" placeholder="Fill in">`
+        }
+        else {
+            question_type_container.innerHTML = `<textarea class="form-control essay_text" rows="4" cols="3"></textarea>`
+        }
+    }
 </script>
 {% endblock %}
