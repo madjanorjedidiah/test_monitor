@@ -200,20 +200,20 @@ select.arrows:focus {
     width: 20px;
     height: 20px;
     margin-left: 10px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
 }
 
 .add_option_but{
     border-radius: 5px;
     width: 100px;
     padding: 3px;
-    margin-left: 10px;
+    /*margin-left: 10px;*/
 }
 
 
 .multiple_text_input {
     border: none;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     /*padding: 5px;*/
     /*border-bottom-style: groove;*/
 }
@@ -231,5 +231,10 @@ select.arrows:focus {
 
 
 .essay_text {
-     margin-left: 10px;
+    margin-left: 10px;
+}
+
+
+.remove_butt_div {
+    margin-left: 25px!important;
 }
