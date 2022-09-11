@@ -16,7 +16,7 @@ class Question(models.Model):
 		ordering = ('-id',)
 
 	def __str__(self):
-		return self.question
+		return self.question_title
 
 
 class SubQuestions(models.Model):

@@ -155,18 +155,25 @@ def all_question(request):
 # ////////////  create questions
 def develop_questions(request):
 	if request.method == 'POST':
-		question = request.POST.get('question')
-		multiple_answers = request.POST.get('multiple_answers')
-		correct_answer = request.POST.get('correct_answer')
+		question_title = request.POST.get('question_title')
+		question = request.POST.getlist('question')
+		multiple_answers = request.POST.getlist('multiple_answers')
+		correct_answer = request.POST.getlist('correct_answer')
+		print(multiple_answers)
+		print(question)
+		ques_data, created = Question.objects.get_or_create(question_title=question_title, user_fk_id=get_user(request).id)
+		
 
-		Questions.objects.get_or_create(
-			user_fk_id = get_user(request).id,
-			question = question,
-			defaults = {
-				'multiple_answers': multiple_answers,
-				'correct_answer': correct_answer
-			}
-		)
+		if created:
+			# for a in 
+			SubQuestions.objects.get_or_create(
+				question = question,
+				question_fk_id = ques_data.id,
+				defaults = {
+					'multiple_answers': multiple_answers,
+					'correct_answer': correct_answer
+				}
+			)
 	return render(request, 'monitor/questions_form.html')
 
 

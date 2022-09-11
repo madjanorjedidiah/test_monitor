@@ -10,38 +10,39 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-10 col-xl-8" id="main_ques_container">
-            <div class="card bg-pattern">
-                <div class="card-body p-4">
-                    <div class="text-center w-75 m-auto">
-                        <div class="auth-logo">
-                            <a href="#" class="logo logo-dark text-center">
-                            </a>
+        <form method="post" id="form1" enctype="multipart/form-data" class="row justify-content-center">
+            {% csrf_token %}
+            <div class="col-md-10 col-lg-10 col-xl-8" id="main_ques_container">
+                <div class="card bg-pattern">
+                    <div class="card-body p-4">
+                        <div class="text-center w-75 m-auto">
+                            <div class="auth-logo">
+                                <a href="#" class="logo logo-dark text-center">
+                                </a>
 
-                            <a href="#" class="logo logo-light text-center">
-                            </a>
+                                <a href="#" class="logo logo-light text-center">
+                                </a>
+                            </div>
+                            <h2 class="text-muted mb-4 mt-3"> DEVELOP YOUR QUESTIONS HERE </h2>
                         </div>
-                        <h2 class="text-muted mb-4 mt-3"> DEVELOP YOUR QUESTIONS HERE </h2>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12" style="background-color: #007a3c; height: 100%; margin-bottom: 20px;">
-                            <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
-                                Questions
-                            </p>
-                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12" style="background-color: #007a3c; height: 100%; margin-bottom: 20px;">
+                                <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
+                                    Questions
+                                </p>
+                            </div>
 
-                        <form method="post" id="form1">
-                            {% csrf_token %}
-                            <label id="ques_title"> Question Title </label>
-                            <input type="text" name="question_title" class="form-control">
+                            <div>
+                                <label id="ques_title"> Question Title </label>
+                                <input type="text" name="question_title" class="form-control">
+                            </div>                            
                             <br>
-                        </form>
-                    </div>
-                </div> <!-- end card-body -->
-            </div>
+                        </div>
+                    </div> <!-- end card-body -->
+                </div>
 
-            <form method="post" id="form2">
-                <div class="card bg-pattern" id="mainsection1">
+                
+                <div class="card bg-pattern mainsection1" id="mainsection1">
                     <div class="card-body p-4 row">
                         <div class="col-md-8">
                             <input type="text" name="question" class="form-control" placeholder="Question">
@@ -50,7 +51,7 @@
                             <select class="form-control arrows answer_choice" id="">
                                 <option value="multiple"> Multiple Questions </option>
                                 <option value="fill_in"> Fill in Questions </option>
-                                <option value="essay"> Essay Questions </option>
+                              <!--   <option value="essay"> Essay Questions </option> -->
                             </select>
                             <br>
                         </div>
@@ -58,30 +59,32 @@
                             <div class="options_div_container">
                                 <div class="row options_div" id="">
                                     <input type="checkbox" name="" class="checkbx form-control">
-                                    <input type="text" name="multiple_answers" class="multiple_text_input col-md-10" placeholder="Option ">
+                                    <input type="text" name="multiple_answers" class="multiple_text_input multiple_answers col-md-10" placeholder="Option ">
                                     <div class="col-md-1 float-right remove_butt_div">
-                                        <button class="float-right remove_butt" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button>
+                                        <button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button>
                                     </div>
                                 </div>
                             </div>
-                            <button class="add_option_but" id="add_option_but"> add option </button>
+                            <button class="add_option_but" id="add_option_but" type="button"> add option </button>
                             <br><br>
                             <input type="text" name="correct_answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-10 col-lg-10 col-xl-8">
-            <div class="card bg-pattern ques_buts">
-                <div class="card-body">
-                    <div class="add_question tooltips">
-                        <button class="" id="but_click" style="border-radius: 15px; width: 25px"> + </button>
-                         <span class="tooltiptext"> New Question</span>  
+            </div>
+
+            <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="card bg-pattern ques_buts">
+                    <div class="card-body">
+                        <div class="add_question tooltips">
+                            <button class="" type="button" id="but_click" style="border-radius: 15px; width: 25px"> + </button>
+                             <span class="tooltiptext"> New Question</span>  
+                        </div>
+                        <button type="button" id="save" style="border-radius: 5px; width:55px;"> Submit </button>
                     </div>
                 </div>
-            </div>
-        </div> <!-- end col -->
+            </div> <!-- end col -->
+        </form>
     </div>
 </div>
 
@@ -91,18 +94,19 @@
 <script type="text/javascript">
     
     document.getElementById("but_click").onclick = function() {
-        var container = document.getElementById("main_ques_container");
-        var section1 = document.getElementById("mainsection1");
-        container.appendChild(section1.cloneNode(true));
+        var container = $('#main_ques_container');
+        container.append(main_card_div);
         dynamic_question()
         dynamic_add_option()
         dynamic_remove_button()
     }
 
 
+
     dynamic_question()
     dynamic_add_option()
     dynamic_remove_button()
+
 
     function dynamic_question(){
         var ans_choice_elements = document.getElementsByClassName("answer_choice")
@@ -116,22 +120,21 @@
                         //  multiple choice 
                         `<div class="row options_div" id="">
                                 <input type="checkbox" name="" class="checkbx form-control">
-                                <input type="text" name="" class="multiple_text_input col-md-10" placeholder="Option ">
-                                <input type="text" name="" value="" class='col-md-12' placeholder="put the correct answer_choice here">
+                                <input type="text" name="multiple_answers" class="multiple_text_input multiple_answers col-md-10" placeholder="Option ">
                                 <div class="col-md-1 float-right remove_butt_div">
-                                    <button class="float-right remove_butt" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button>
+                                    <button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button>
                                 </div>
                             </div>
-                        <button class="add_option_but"> add option </button>
+                        <button type="button" class="add_option_but"> add option </button>
                         <br><br>
-                        <input type="text" name="" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">`                
+                        <input type="text" name="correct_answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">`                
                 }
-                else if (selectd == 'fill_in'){
-                    question_type_container.innerHTML = `<input type="text" name="correct_answer" class="multiple_text_input fill_in_text" placeholder="Fill in">`
+                else{
+                    question_type_container.innerHTML = `<input type="text" name="correct_answer" class="multiple_text_input fill_in_text" placeholder="Put the correct answer here">`
                 }
-                else {
-                    question_type_container.innerHTML = `<textarea class="form-control essay_text" rows="4" cols="3"></textarea>`
-                }
+                // else {
+                //     question_type_container.innerHTML = `<textarea class="form-control essay_text" rows="4" cols="3"></textarea>`
+                // }
             }
             )
         }
@@ -139,34 +142,69 @@
     
     
 
+    var outer_diviser = '';
+    function get_length_of_options_for_each_section(){
+        let all_question_sections = $(".mainsection1")
+        all_question_sections.each(function(){
+            var num = $('.multiple_answers', this).length
+            outer_diviser = outer_diviser.concat(String(num))
+            console.log(outer_diviser)
+        })
+    }
+    
+
+
     function dynamic_add_option(){
         var add_button_elements = document.getElementsByClassName("add_option_but")
         for (var i = 0; i < add_button_elements.length; i++) {
             add_button_elements[i].addEventListener('click', function() {
                 if (this.click){
-                    var options_div_container = this.previousElementSibling
-                    var options_section = options_div_container.firstChild.nextElementSibling
-                    options_div_container.appendChild(options_section.cloneNode(true))
+                    var options_div_container = $(this).prev()  // get previous sibling
+                    //var options_section = options_div_container.firstChild.nextElementSibling
+                    options_div_container.append(options_section)
                 }
             })
         }
     }
     
 
+
     function dynamic_remove_button(){
         var remove_button_elements = document.getElementsByClassName("remove_butt")
         for (var i = 0; i < remove_button_elements.length; i++) {
-            remove_button_elements[i].addEventListener('click', function() {
+            remove_button_elements[i].addEventListener('click', function(e) {
+                e.preventDefault()
                 if (this.click){
                     var parent_div = this.parentNode.parentNode
-                    parent_div.style.display = 'none';
+                    parent_div.remove()
                 }
             })
         }
     }
-    // $(".remove_butt").on('click', function() {
-    //     this.style.display = 'none';
-    //     alert(this.attr(id))
-    // })
+
+
+
+    var main_card_div = '<div class="card bg-pattern mainsection1" id="mainsection1"><div class="card-body p-4 row"><div class="col-md-8"><input type="text" name="question" class="form-control" placeholder="Question"></div> <div class="col-md-4"><select class="form-control arrows answer_choice" id=""><option value="multiple"> Multiple Questions </option><option value="fill_in"> Fill in Questions </option></select><br></div><div id="" class="type_of_quuestions"><div class="options_div_container"><div class="row options_div" id=""><input type="checkbox" name="" class="checkbx form-control"><input type="text" name="multiple_answers" class="multiple_text_input multiple_answers col-md-10" placeholder="Option "><div class="col-md-1 float-right remove_butt_div"><button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button></div></div></div><button class="add_option_but" id="add_option_but" type="button"> add option </button><br><br><input type="text" name="correct_answer" value="" class="multiple_text_input col-md-12" placeholder="Put the correct answer_choice here"></div></div>'
+
+
+
+    var options_section = '<div class="row options_div" id=""><input type="checkbox" name="" class="checkbx form-control"><input type="text" name="multiple_answers" class="multiple_text_input col-md-10" placeholder="Option "><div class="col-md-1 float-right remove_butt_div"><button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button></div></div>'
+
+
+
+    //  submit form
+    document.getElementById('save').onclick = function() {
+        token = '{{ csrf_token }}'
+        get_length_of_options_for_each_section()
+        $.ajax({
+            url  : '/develop_questions/',
+            type : 'POST',
+            headers: {'X-CSRFToken': token},
+            data : $('#form1').serialize(),
+            success : function(data) {
+               if(data=="done"){  }
+               }
+        })  
+    }
 </script>
 {% endblock %}
