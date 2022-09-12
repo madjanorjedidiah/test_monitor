@@ -9,6 +9,7 @@ def get_user(request,):
     return user
 
 
+# create a sublist from a list with the lenth of the sublist equal to the n target 
 def list_sub_list(lst, n):
     newl = []
     start_index = 0
@@ -25,3 +26,19 @@ def list_sub_list(lst, n):
     else:
         newl.append(lst)
     return newl
+
+
+# format multiple answes into right list format
+def format_multiple_answers(diviser: str, lists: list):
+    c = 0
+    new_list = []
+    for a in diviser:
+        if a == '0':
+            new_list.append([])
+        elif diviser.index(a) == 0:
+            new_list.append(lists[c:int(a)])
+            c += int(a)
+        else:
+            new_list.append(lists[c:int(a)+int(c)])
+            c += int(a)
+    return new_list

@@ -16,4 +16,6 @@ urlpatterns = [
     path('question_details/', views.question_details, name='question_details'),
     path('all_question/', views.all_question, name='all_question'),
     path('develop_questions/', views.develop_questions, name='develop_questions'),
+    path('student_profile/', views.student_userbio, name='student_profile'),
+    path('teacher_profile/', views.teacher_userbio, name='teacher_profile'),
 	]

@@ -238,3 +238,9 @@ select.arrows:focus {
 .remove_butt_div {
     margin-left: 25px!important;
 }
+
+
+.level_semester {
+    margin-top: 15px;
+    margin-left: 0;
+}

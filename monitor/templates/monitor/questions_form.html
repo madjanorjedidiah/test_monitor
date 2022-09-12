@@ -35,6 +35,11 @@
                             <div>
                                 <label id="ques_title"> Question Title </label>
                                 <input type="text" name="question_title" class="form-control">
+                            </div>
+                            <div class="row col-md-12 level_semester">
+                                <input type="text" name="level" class="form-control col-md-4" placeholder="Level">
+                                <input type="text" name="year" class="form-control col-md-4" placeholder="Present year">
+                                <input type="text" name="semester" class="form-control col-md-4 float-right" placeholder="Semester">
                             </div>                            
                             <br>
                         </div>
@@ -72,6 +77,8 @@
                     </div>
                 </div>
             </div>
+
+            <input type="text" name="diviser" id="diviser" class="d-none">  <!-- hidden input for the diviser  -->
 
             <div class="col-md-10 col-lg-10 col-xl-8">
                 <div class="card bg-pattern ques_buts">
@@ -142,14 +149,15 @@
     
     
 
-    var outer_diviser = '';
+    
     function get_length_of_options_for_each_section(){
-        let all_question_sections = $(".mainsection1")
-        all_question_sections.each(function(){
-            var num = $('.multiple_answers', this).length
-            outer_diviser = outer_diviser.concat(String(num))
-            console.log(outer_diviser)
-        })
+        var outer_diviser = '';
+        var all_container = document.getElementsByClassName('mainsection1')
+        for (var i=0; all_container.length>i; i++){
+            var multi_class = all_container[i].getElementsByClassName('multiple_answers').length
+            outer_diviser = outer_diviser.concat(String(multi_class))
+        }
+        return outer_diviser
     }
     
 
@@ -188,14 +196,16 @@
 
 
 
-    var options_section = '<div class="row options_div" id=""><input type="checkbox" name="" class="checkbx form-control"><input type="text" name="multiple_answers" class="multiple_text_input col-md-10" placeholder="Option "><div class="col-md-1 float-right remove_butt_div"><button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button></div></div>'
+    var options_section = '<div class="row options_div" id=""><input type="checkbox" name="" class="checkbx form-control"><input type="text" name="multiple_answers" class="multiple_text_input col-md-10 multiple_answers" placeholder="Option "><div class="col-md-1 float-right remove_butt_div"><button class="float-right remove_butt" type="button" id="remove_butt" style="border-radius: 5px; width: 25px; background-color: white; height: 25px;"> x </button></div></div>'
 
 
 
     //  submit form
     document.getElementById('save').onclick = function() {
         token = '{{ csrf_token }}'
-        get_length_of_options_for_each_section()
+        var diviser = get_length_of_options_for_each_section()
+        var diviser_input = document.getElementById('diviser').value = diviser
+        alert(diviser_input)
         $.ajax({
             url  : '/develop_questions/',
             type : 'POST',
