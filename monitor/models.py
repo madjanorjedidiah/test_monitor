@@ -88,3 +88,8 @@ class Answers(models.Model):
 
 
 
+class ScheduleTest(models.Model):
+	show = (('open', 'open'), ('close', 'close'))
+	date_scheduled = models.DateTimeField(null=True, blank=True)
+	show_now = models.CharField(choices=show, default='close')
+	question_fk = models.OneToOneField(Question, on_delete=models.CASCADE)

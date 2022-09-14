@@ -38,6 +38,7 @@
 
                             <div>
                                 <div class="row">
+                                    <form></form>
                                     <div class="col-lg-12 col-sm-12" style="height: 100%;">
                                         <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
                                             My Questions
@@ -45,37 +46,15 @@
                                         <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%; background-color: white; color:white;">
                                             {% for a in data %}
                                             <li>
-                                                <a class="header-cta__button ques_class" style="background-color: black; color:white;" id="{{a.id}}" href="#apply{{a.id}}"  data-toggle="collapse"> 
+                                                <a class="header-cta__button ques_class" style="background-color: black; color:white;" id="{{a.id}}" href="#apply{{a.id}}"> 
                                                     <span style="text-align:left; float: left;">
                                                     Question Title:  {{a.question_title}} <br>
                                                     Course Name:  {{a.course_fk.course_name}} <br>
                                                     Course Code:  {{a.course_fk.course_code}}
                                                     </span>
                                                 </a>
+                                                <a href="" id="{{a.id}}">  </a>
                                             </li>
-                                            <div id="apply{{a.id}}" class="collapse"  style="width: 100%;">
-                                                {% for b in a.subquestions_set.all %}
-                                                    <div style="margin-left: 0; color: black; width: 100%; text-align: left; background-color: white;">
-                                                        <div class="ck">
-                                                            Question {{ forloop.counter }}. <br>
-                                                            {{b.question}}
-                                                        </div>
-                                                        <div class="ck">
-                                                            Multiple Choice: <br> 
-                                                            {% with list1=b.multiple_answers|string_filter %}
-                                                            {% for cc in list1 %}
-                                                                <input type="checkbox" name=""> {{cc}}<br>
-                                                            {% endfor %}
-                                                            {% endwith %}
-                                                        </div>
-                                                        <div class="ck">
-                                                            Answer: <br>
-                                                            {{b.correct_answer}} <br>
-                                                        </div>
-                                                    </div>
-                                                    <br>
-                                                {% endfor %}
-                                            </div>
                                             <a href="/responses/?data={{a.id}}" style="width: 100%; text-align: left; background-color: green; padding: 5px; color: white;">&nbsp&nbsp Submitted Responses</a>
                                             {% endfor %}
                                         </ul>

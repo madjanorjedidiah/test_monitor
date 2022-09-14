@@ -1,8 +1,15 @@
-{% extends "monitor/base.html"%}
-{% load static%}
+{% extends "monitor/base.html"%}  
+{% load static %}
+{% load string_format %}
 
 
 {% block css %}
+    <style type="text/css">
+        .ck {
+            margin-bottom: 5px;
+            padding: 5px;
+        }
+    </style>
     <link rel="stylesheet" type="text/css" href="/static/monitor/css/question_index.css">
 {% endblock %}
 
@@ -41,14 +48,27 @@
                                                 </a>
                                             </li>
                                             {% for b in a.subquestions_set.all %}
-                                                <div>
-                                                    <p>{{b.question}}</p>
-                                                    <p>{{b.multiple_answers}}</p>
-                                                    <p>{{b.correct_answer}}</p>
+                                                <div style="margin-left: 0; color: black; width: 100%; text-align: left; background-color: white;">
+                                                    <div class="ck">
+                                                        Question {{ forloop.counter }}. <br>
+                                                        {{b.question}}
+                                                    </div>
+                                                    <div class="ck">
+                                                        Multiple Choice: <br> 
+                                                        {% with list1=b.multiple_answers|string_filter %}
+                                                        {% for cc in list1 %}
+                                                            <input type="checkbox" name=""> {{cc}}<br>
+                                                        {% endfor %}
+                                                        {% endwith %}
+                                                    </div>
+                                                    <div class="ck">
+                                                        Answer: <br>
+                                                        {{b.correct_answer}} <br>
+                                                    </div>
                                                 </div>
                                                 <br>
                                             {% endfor %}
-
+                                            {% endfor %}
                                             <li style="margin-bottom:10px">
                                                 <a class="header-cta__button" href="{% url 'all_question' %}">More Questions
                                                 </a>

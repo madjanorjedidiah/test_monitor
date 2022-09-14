@@ -255,4 +255,20 @@
         </div>
         {% endif %}
     </div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#ex').DataTable({
+            'pageLength' : 5,
+            'lengthChange': false,
+            'searching': false,
+            // 'paging' : false,
+            "bInfo": false,
+        });
+    });
+            
+
+</script>
 {% endblock %}

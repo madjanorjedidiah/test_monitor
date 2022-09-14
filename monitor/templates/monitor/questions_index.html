@@ -37,7 +37,7 @@
                                         <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%;">
                                             {% for a in data %}
                                             <li>
-                                                <a class="header-cta__button ques_class" id="{{a.id}}" href="#"> {{a.question_title}}
+                                                <a class="header-cta__button ques_class" id="{{a.id}}" href="{% url 'question_details' a.id %}"> {{a.question_title}}
                                                 </a>
                                             </li>
                                             {% endfor %}
@@ -65,12 +65,12 @@
 
 <script type="text/javascript">
     
-    $(document).ready(function(){
+    // $(document).ready(function(){
 
-        $('.ques_class').on('click', function(){
-            var idd = $(this).id
-            location.href = '/question_details/' + idd
-        })
-    })
+    //     $('.ques_class').on('click', function(){
+    //         var idd = $(this).id
+    //         location.href = '/question_details/' + idd
+    //     })
+    // })
 </script>
 {% endblock %}

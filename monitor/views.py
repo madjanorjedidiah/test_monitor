@@ -119,7 +119,7 @@ def userbio(request):
 @login_required(login_url="/login/")
 def student_userbio(request):
 	user = get_user(request)
-	all_course = Courses.objects.filter(level=level)
+	all_course = None # Courses.objects.filter(level=level)
 	if request.method == 'POST':
 		first_name = request.POST.get('first_name')
 		last_name = request.POST.get('last_name')
@@ -141,6 +141,14 @@ def student_userbio(request):
 		)
 		return HttpResponseRedirect(reverse('profile'))
 	return render(request, 'monitor/student_userbio.html', {'all_course':all_course})
+
+
+
+def get_student_level_courses(request, level):
+	all_course = None
+	if level:
+		all_course = Courses.objects.filter(level=level)
+	return render(request, 'monitor/student_course.html', {'all_course':all_course})
 
 
 
@@ -187,9 +195,8 @@ def close_account(request):
 
 
 
-
 def question_index(request):
-	return render(request, 'monitor/questions_index.html', {'data': Question.objects.filter(user_fk=get_user(request))[:3]})
+	return render(request, 'monitor/questions_index.html', {'data': Question.objects.filter(teacher_fk__user_fk=get_user(request))[:3]})
 
 
 
@@ -213,8 +220,8 @@ def submitted_responses(request):
 	data = None
 	if user.user_role == 'teacher':
 		data = Answers.objects.filter(question_fk_id=obj_id)
-		print(data)
 	return render(request, 'monitor/submitted_responses.html', {'data':data})
+
 
 
 # ////////////  create questions
@@ -310,6 +317,18 @@ def get_responses(request):
 # //////////  
 
 
+def student_tests(request):
+	courses = Students.objects.values_list('course_fk', flat=True)
+	tests = [Question.objects.get(course_fk_id=a) for a in list(courses)]
+	print(tests)
+	return render(request, 'monitor/all_courses.html', {'courses': tests})
+
+
 
 def all_courses(request):
 	return render(request, 'monitor/all_courses.html', {'courses':Courses.objects.all()})
+
+
+
+# def all_courses(request):
+# 	return render(request, 'monitor/all_courses.html', {'courses':Courses.objects.all()})

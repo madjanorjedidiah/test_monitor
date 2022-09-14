@@ -54,10 +54,6 @@
                                     <input type="text" class="form-control" id="last_name" name="last_name" required=""
                                         placeholder="Enter your last name">
                                 </div>
-                                <!-- <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="email" name="email" required=""
-                                        placeholder="Enter your email">
-                                </div> -->
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" id="contact" name="contact" required=""
                                         placeholder="Enter your phone number">
@@ -66,11 +62,12 @@
                                     <input type="text" class="form-control" id="level" name="level" required=""
                                         placeholder="Enter your level">
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label> Select the courses assigned to you </label>
+                                <div class="form-group mb-3" id='loop_course'>
+                                    <label class="col-md-12"> Select the courses assigned to you </label>
                                     {% for a in all_course %}
-                                    <input type="checkbox" class="form-control col-md-1" value="{{a.id}}" name="courses">
-                                    {{a.course_name}} - {{a.course_code}}
+                                    <div></div>
+                                    <input type="checkbox" value="{{a.id}}" name="courses" style="width:20px; height:15px"> <a>&nbsp {{a.course_name}} - {{a.course_code}}</a>
+                                    <br>
                                     {% endfor %}
                                 </div>
                                 <div class="form-group mb-0 text-center">
@@ -94,4 +91,15 @@
             <!-- end row -->
         </div>
 
+
+
+<script type="text/javascript">
+    $('#level').change(function(){
+        var level = $('#level').val()
+        $.get(`/get_student_level_courses/${level}`, function(data){
+            alert(data)
+            $('#loop_course').html(data)
+        })
+    })
+</script>
 {% endblock %}

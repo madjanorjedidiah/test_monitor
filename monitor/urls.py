@@ -13,7 +13,7 @@ urlpatterns = [
 	path('profile/', views.profile, name='profile'),
     path('deleteuser/<int:obj_id>', views.deleteuser, name='deleteuser'),
     path('question_index/', views.question_index, name='question_index'),
-    path('question_details/', views.question_details, name='question_details'),
+    path('question_details/<int:obj_id>', views.question_details, name='question_details'),
     path('all_question/', views.all_question, name='all_question'),
     path('develop_questions/', views.develop_questions, name='develop_questions'),
     path('student_profile/', views.student_userbio, name='student_profile'),
@@ -22,4 +22,6 @@ urlpatterns = [
     path('all_courses/', views.all_courses, name='all_courses'),
     path('responses/', views.submitted_responses, name='responses'),
     path('get_responses/', views.get_responses, name='get_responses'),
+    path('get_student_level_courses/<str:level>', views.get_student_level_courses, name='get_student_level_courses'),
+    path('student_tests/', views.student_tests, name='student_tests'),
 	]
