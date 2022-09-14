@@ -1,0 +1,51 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="text-center topic col-md-8"> All Courses </div>
+	<div class="card bg-pattern col-md-8 d-block p-2 d-flex justify-content-center">
+		<div class="table-responsive">
+	        <table id="example1" class="display cell-border" style="width:100%">
+	            <thead>
+	                <tr>
+	                    <th>Course Name </th>
+	                    <th>Course Code</th>
+	                    <th>Semester</th>
+	                    <th>Level</th>	                    
+	                </tr>
+	            </thead>
+	            <tbody>                                        
+	            	{% for a in courses %}
+	                <tr class="clickable" id={{sb_list.pk}}>
+	                    <td>{{a.course_name}}</td>
+	                    <td>{{a.course_code}}</td>
+	                    <td>{{a.semester}}</td>
+	                    <td>{{a.level}}</td>
+	                </tr>
+	                {% endfor %}
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+	<br>
+	</div>
+</div>
+			
+	
+</div>
+
+<script type="text/javascript">
+	$('.item').first().addClass('active')
+
+	$(document).ready(function() {
+	    $('#example1').DataTable({
+	    	'pageLength' : 5,
+	    	'lengthChange': false
+	    });
+	});
+		    
+
+</script>
+{% endblock %}

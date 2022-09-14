@@ -128,6 +128,27 @@
             color: black;
         }
 
+        #ex tr:nth-child(even){
+            padding-top: 12px!important;
+            padding-bottom: 12px!important;
+            background-color: #f2f2f2;
+        }
+
+        #ex tr:hover {background-color: #ddd;}
+
+        #ex th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #04AA6D;
+          color: white;
+        }
+
+        tr { 
+          cursor: pointer; 
+        }
+
+
 </style>
 {% endblock %}
 
@@ -136,7 +157,7 @@
 	<div class="d-flex justify-content-center">
 
         {% if data %}
-		<div class="grid__sidebar col-lg-4">
+		<div class="grid__sidebar col-lg-6">
             <div class="block contact-info block--frame col-md-12 col-sm-9">
                 <div class="block__intro">
                     <div class="section-intro section-intro--ultra-minimal section-intro--divider">
@@ -183,6 +204,37 @@
                                     </a>
                                 </div>
                             </dd>
+                            <dt class="contact-info__label contact-info__label--phone">
+                               Courses
+                            </dt>   
+                            <div class="table-responsive">
+                                <table id="ex" class="display cell-border" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Course Name</th>
+                                            <th>Course Code</th>
+                                            <th> Level </th>
+                                            <th> Semester </th>    
+                                            {% if user.is_authenticated and user.user_role == 'teacher' %}
+                                            <th> Questions </th>            
+                                            {% endif %}       
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                        
+                                        {% for a in data_table %}
+                                        <tr class="clickable" id={{sb_list.pk}}>
+                                            <td>{{a.course_name}}</td>
+                                            <td>{{a.course_code}}</td>
+                                            <td>{{a.level}}</td>
+                                            <td>{{a.semester}}</td>
+                                            {% if user.is_authenticated and user.user_role == 'teacher' %}
+                                            <td><a href="/develop_questions/?data={{a.id}}" style="padding:5px; background-color: #45bcde; color:white;"> New Question </a></td>
+                                            {% endif %}    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </dl>
                     </div>
 

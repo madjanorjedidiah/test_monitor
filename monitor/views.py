@@ -22,6 +22,10 @@ def signup(request):
 			if created:
 				user.set_password(password)
 				user.save()
+				if user_role == 'teacher':
+					teacher_data, created = Teachers.objects.get_or_create(user_fk_id = user.id)
+				else:
+					student_data, created = Students.objects.get_or_create(user_fk_id = user.id)
 				messages.add_message(
 					request, 
 					messages.INFO,
@@ -92,8 +96,13 @@ def admin_level(request):
 
 @login_required(login_url="/login/")
 def profile(request):
-	user = UserIdentity.objects.filter(username=request.user)
-	return render(request, 'monitor/profile.html', {'data':user[0] if user else None})
+	user = get_user(request)
+	data_table = None
+	if user.user_role == 'teacher':
+		data_table = Teachers.objects.filter(user_fk=user)[0].course_fk.all()[:6]
+	else:
+		data_table = Students.objects.filter(user_fk=user)[0].course_fk.all()[:6]
+	return render(request, 'monitor/profile.html', {'data':user, 'data_table':data_table})
 
 
 
@@ -109,17 +118,21 @@ def userbio(request):
 
 @login_required(login_url="/login/")
 def student_userbio(request):
+	user = get_user(request)
+	all_course = Courses.objects.filter(level=level)
 	if request.method == 'POST':
-		user = UserIdentity.objects.filter(username=request.user)
 		first_name = request.POST.get('first_name')
 		last_name = request.POST.get('last_name')
 		contact = request.POST.get('contact')
 		level = request.POST.get('level')
-		user[0].first_name = first_name
-		user[0].last_name = last_name
-		user[0].contact = contact
-		user[0].level = level
-		user[0].user_student_id = user[0].id
+		courses = request.POST.getlist('courses')
+		user.first_name = first_name
+		user.last_name = last_name
+		user.contact = contact
+		user.level = level
+		user.save()
+		student_data = Students.objects.get(user_fk_id = user.id)
+		student_data.course_fk.add(*courses)
 		messages.add_message(
 			request, 
 			messages.INFO,
@@ -127,21 +140,25 @@ def student_userbio(request):
 			extra_tags = 'success'
 		)
 		return HttpResponseRedirect(reverse('profile'))
-	return render(request, 'monitor/student_userbio.html')
+	return render(request, 'monitor/student_userbio.html', {'all_course':all_course})
 
 
 
 #@login_required(login_url="/login/")
 def teacher_userbio(request):
+	all_course = Courses.objects.all()
 	if request.method == 'POST':
-		user = UserIdentity.objects.filter(username=request.user).select_related('user_teacher')
+		user = get_user(request)
 		first_name = request.POST.get('first_name')
 		last_name = request.POST.get('last_name')
 		contact = request.POST.get('contact')
-		user[0].first_name = first_name
-		user[0].last_name = last_name
-		user[0].contact = contact
-		user[0].user_teacher_id = user[0].id
+		courses = request.POST.getlist('courses')
+		user.first_name = first_name
+		user.last_name = last_name
+		user.contact = contact
+		user.save()
+		teacher_data = Teachers.objects.get(user_fk_id = user.id)
+		teacher_data.course_fk.add(*courses)
 		messages.add_message(
 			request, 
 			messages.INFO,
@@ -149,7 +166,7 @@ def teacher_userbio(request):
 			extra_tags = 'success'
 		)
 		return HttpResponseRedirect(reverse('profile'))
-	return render(request, 'monitor/teacher_userbio.html')
+	return render(request, 'monitor/teacher_userbio.html', {'all_course':all_course})
 
 
 
@@ -182,26 +199,46 @@ def question_details(request, obj_id):
 
 
 def all_question(request):
-	return render(request, 'monitor/all_questions.html', {'data': Question.objects.filter(user_fk=get_user(request))})
+	user = get_user(request)
+	data = None
+	if user.user_role == 'teacher':
+		data = Question.objects.filter(teacher_fk__user_fk=user)
+	return render(request, 'monitor/all_questions.html', {'data':data})
 
+
+
+def submitted_responses(request):
+	obj_id = request.GET.get('data')
+	user = get_user(request)
+	data = None
+	if user.user_role == 'teacher':
+		data = Answers.objects.filter(question_fk_id=obj_id)
+		print(data)
+	return render(request, 'monitor/submitted_responses.html', {'data':data})
 
 
 # ////////////  create questions
 def develop_questions(request):
+	obj_id = request.GET.get('data')
+	course = None
+	if obj_id:
+		course = Courses.objects.filter(id=obj_id)
 	if request.method == 'POST':
 		question_title = request.POST.get('question_title')
-		level = request.POST.get('level')
-		semester = request.POST.get('semester')
 		question = request.POST.getlist('question')
 		multiple_answers = request.POST.getlist('multiple_answers')
 		correct_answer = request.POST.getlist('correct_answer')
 		diviser = request.POST.get('diviser')
+		level = request.POST.get('level')
+		course_code = request.POST.get('course_code')
 		multi_ans = format_multiple_answers(diviser, multiple_answers)
 		ziped = list(zip(question, multi_ans, correct_answer))
-		print(ziped)
-		ques_data, created = Question.objects.get_or_create(question_title=question_title, level=level, semester=semester, user_fk_id=get_user(request).id)
-		
-
+		if course == None:
+			course = Courses.objects.filter(level=level, course_code=course_code)
+		ques_data, created = Question.objects.get_or_create(
+			question_title=question_title, 
+			teacher_fk_id=Teachers.objects.get(user_fk=get_user(request)).id, 
+			course_fk_id=course[0].id if course else course)
 		if created:
 			for a in range(0,len(ziped)):
 				SubQuestions.objects.get_or_create(
@@ -212,12 +249,58 @@ def develop_questions(request):
 						'correct_answer': ziped[a][2]
 					}
 				)
-	return render(request, 'monitor/questions_form.html')
+			messages.add_message(
+				request, 
+				messages.INFO,
+				"You have successfully created your record",
+				extra_tags = 'success'
+			)
+			return HttpResponse('done')
+		else:
+			messages.add_message(
+				request, 
+				messages.INFO,
+				"Question already exists",
+				extra_tags = 'success'
+			)
+	return render(request, 'monitor/questions_form.html', {'course_data':course[0] if course else course})
+
+
+
+def create_courses(request):
+	if request.method == 'POST':
+		course_name = request.POST.get('course_name')
+		level = request.POST.get('level')
+		course_code = request.POST.get('course_code')
+		semester = request.POST.get('semester')
+		data, created = Courses.objects.get_or_create(course_name=course_name, course_code=course_code, defaults={'level': level, 'semester': semester})
+		if created:
+			messages.add_message(
+				request, 
+				messages.INFO,
+				"You have successfully created your record",
+				extra_tags = 'success'
+			)
+	return render(request, 'monitor/courses_form.html')
 
 
 
 # ///////////  take in candidate answers
-
+def get_responses(request):
+	obj_id = request.GET.get('data')
+	question_data = Question.objects.filter(id=obj_id)
+	if request.method == 'POST':
+		answer = request.POST.get('answer')
+		subquestions_id = request.POST.get('subquestions_id')
+		data, created = Answers.objects.get_or_create(answer=answer, question_fk_id=subquestions_id, defaults={'student_fk_id': get_user(request).id})
+		if created:
+			messages.add_message(
+				request, 
+				messages.INFO,
+				"You have successfully submitted a response",
+				extra_tags = 'success'
+			)
+	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 
 
@@ -225,3 +308,8 @@ def develop_questions(request):
 
 
 # //////////  
+
+
+
+def all_courses(request):
+	return render(request, 'monitor/all_courses.html', {'courses':Courses.objects.all()})

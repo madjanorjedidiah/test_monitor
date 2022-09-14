@@ -24,7 +24,7 @@
                                     </a>
                                 </div>
 
-                                <h2 class="text-muted mb-1 mt-3"> All QUESTIONS </h2>
+                                <h2 class="text-muted mb-1 mt-3"> SUBMITTED RESPONSES </h2>
                             </div>
 
 
@@ -32,32 +32,25 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-sm-12" style="height: 100%;">
                                         <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
-                                            My Questions
+                                            Responses
                                         </p>
                                         <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%; background-color: #f7f5f5;">
                                             {% for a in data %}
                                             <li>
                                                 <a class="header-cta__button ques_class" style="background-color: #00d0ff;" id="{{a.id}}" href="#apply{{a.id}}"  data-toggle="collapse"> 
                                                     <span style="text-align:left; float: left;">
-                                                    Question Title:  {{a.question_title}} <br>
-                                                    Course Name:  {{a.course_fk.course_name}} <br>
-                                                    Course Code:  {{a.course_fk.course_code}}
+                                                        Student:  {{a.student_fk.user_fk.first_name}} {{a.student_fk.user_fk.last_name}} 
                                                     </span>
                                                 </a>
                                             </li>
                                             <div id="apply{{a.id}}" class="collapse">
-                                                {% for b in a.subquestions_set.all %}
                                                     <div style="margin-left: 18px;">
                                                         <span>
-                                                            {{b.question}} <br>
-                                                            {{b.multiple_answers}} <br>
-                                                            {{b.correct_answer}} <br>
+                                                            {{a.answer}} <br>
                                                         </span>
                                                     </div>
                                                     <br>
-                                                {% endfor %}
                                             </div>
-                                            <a href="/responses/?data={{a.id}}" style="width: 100%; text-align: left; background-color: green; padding: 5px; color: white;">&nbsp&nbsp Submitted Responses</a>
                                             {% endfor %}
                                         </ul>
                                     </div>

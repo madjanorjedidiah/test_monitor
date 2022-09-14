@@ -18,4 +18,8 @@ urlpatterns = [
     path('develop_questions/', views.develop_questions, name='develop_questions'),
     path('student_profile/', views.student_userbio, name='student_profile'),
     path('teacher_profile/', views.teacher_userbio, name='teacher_profile'),
+    path('courses/', views.create_courses, name='courses'),
+    path('all_courses/', views.all_courses, name='all_courses'),
+    path('responses/', views.submitted_responses, name='responses'),
+    path('get_responses/', views.get_responses, name='get_responses'),
 	]

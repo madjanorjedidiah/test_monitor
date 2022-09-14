@@ -1,0 +1,122 @@
+{% extends "monitor/base.html"%}
+{% load static%}
+
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="/static/monitor/css/question_index.css">
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <form method="post" id="form1" enctype="multipart/form-data" class="row justify-content-center">
+            {% csrf_token %}
+            <div class="col-md-10 col-lg-10 col-xl-8" id="main_ques_container">
+                <div class="card bg-pattern">
+                    <div class="card-body p-4">
+                        <div class="text-center w-75 m-auto">
+                            <div class="auth-logo">
+                                <a href="#" class="logo logo-dark text-center">
+                                </a>
+
+                                <a href="#" class="logo logo-light text-center">
+                                </a>
+                            </div>
+                            <h2 class="text-muted mb-4 mt-3"> Answer the Questions Below </h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12" style="background-color: #007a3c; height: 100%; margin-bottom: 20px;">
+                                <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
+                                    Questions
+                                </p>
+                            </div>
+
+                            {% block flash %}
+                                <ul class="messages" id="messages-list">
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    <li style="list-style-type: none;">
+                                        {% if message.tags %}
+                                        <div class="alert alert-{{ message.tags }} msg fade show" role="alert">{{ message }}</div>
+                                        {% else %}
+                                        <div class="alert alert-info msg fade show" role="alert">{{ message }}</div>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                    {% endif %}
+                                </ul>
+                            {% endblock %}
+
+                            <div>
+                                <label id="ques_title"> Question Title </label>
+                                <input type="text" name="question_title" class="form-control" readonly>
+                            </div>
+                            <div class="row col-md-12 level_semester ">
+                                <input type="text" name="level" class="form-control col-md-4" value="{{course_data.level}}" placeholder="Level" readonly>
+                                <p class="col-md-4"> </p>
+                                <input type="text" name="course_code" class="form-control col-md-4 float-right" value="{{course_data.course_code}}" placeholder="Course code" readonly>
+                            </div>                            
+                            <br>
+                        </div>
+                    </div> <!-- end card-body -->
+                </div>
+
+                
+                <div class="card bg-pattern mainsection1" id="mainsection1">
+                    <div class="card-body p-4 row">
+                        <div class="col-md-12">
+                            <input type="text" name="question" class="form-control" placeholder="Question" readonly>
+                        </div>
+                        <div id="" class="type_of_quuestions">
+                            <div class="options_div_container">
+                                <div class="row options_div" id="">
+                                    <input type="radio" name="" class="checkbx form-control">
+                                    <input type="text" name="multiple_answers" class="multiple_text_input multiple_answers col-md-10" readonly>
+                                </div>
+                            </div>
+                            <input type="text" name="answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="text" name="diviser" id="diviser" class="d-none">  <!-- hidden input for the diviser  -->
+
+            <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="card bg-pattern ques_buts">
+                    <div class="card-body">
+                        <div class="add_question tooltips">
+                            <button class="" type="button" id="but_click" style="border-radius: 15px; width: 25px"> + </button>
+                             <span class="tooltiptext"> New Question</span>  
+                        </div>
+                        <button type="button" id="save" style="border-radius: 5px; width:55px;"> Submit </button>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </form>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    //  submit form
+    document.getElementById('save').onclick = function() {
+        token = '{{ csrf_token }}'
+        $.ajax({
+            url  : '/develop_questions/',
+            type : 'POST',
+            headers: {'X-CSRFToken': token},
+            data : $('#form1').serialize(),
+            success : function(data) {
+               if(data=="done"){ 
+
+               }
+            }
+        })  
+    }
+</script>
+{% endblock %}

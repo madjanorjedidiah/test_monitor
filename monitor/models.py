@@ -8,20 +8,31 @@ class UserIdentity(AbstractUser):
 	user_role = models.CharField(choices=user_type, max_length=20)
 
 
+class Courses(models.Model):
+	level = models.CharField(max_length=4, null=True, blank=True)
+	semester = models.CharField(max_length=4, null=True, blank=True)
+	course_code = models.CharField(max_length=200, blank=True, null=True)
+	course_name = models.CharField(max_length=200, blank=True, null=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+
+	def __str__(self):
+		return self.course_name
+
+
 class Teachers(models.Model):
 	user_fk = models.OneToOneField(UserIdentity, on_delete=models.CASCADE, related_name='user_teacher')
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
+	course_fk = models.ManyToManyField(Courses, related_name='teacher_course')
 
 
 	class Meta:
 		ordering = ('-id',)
 
-	def __str__(self):
-		return self.name
-
 
 class Students(models.Model):
 	level = models.CharField(max_length=4, null=True, blank=True)
+	course_fk = models.ManyToManyField(Courses, related_name='student_course')
 	user_fk = models.OneToOneField(UserIdentity, on_delete=models.CASCADE, related_name='user_student')
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -30,16 +41,14 @@ class Students(models.Model):
 		ordering = ('-id',)
 
 	def __str__(self):
-		return self.name
+		return self.course_fk
 
 
 class Question(models.Model):
 	question_title = models.CharField(max_length=200, null=True, blank=True)
-	level = models.CharField(max_length=4, null=True, blank=True)
-	semester = models.CharField(max_length=4, null=True, blank=True)
-	year = models.CharField(max_length=4, null=True, blank=True)
 	teacher_fk = models.ForeignKey(Teachers, on_delete=models.CASCADE)
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
+	course_fk = models.ForeignKey(Courses, on_delete=models.CASCADE)
 
 
 	class Meta:
@@ -76,3 +85,6 @@ class Answers(models.Model):
 
 	def __str__(self):
 		return self.answer
+
+
+

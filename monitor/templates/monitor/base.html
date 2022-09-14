@@ -90,6 +90,18 @@
                     <li class="dropdown d-none d-lg-inline-block">
                         <a class="nav-link waves-effect waves-light" href="{% url 'profile' %}"> Profile </a>
                     </li>
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'all_courses' %}"> Courses </a>
+                    </li>
+                    {% if user.is_authenticated and user.user_role == 'student' %}
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'question_index' %}"> Questions </a>
+                    </li>
+                    {% else %}
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link waves-effect waves-light" href="{% url 'question_index' %}"> Questions </a>
+                    </li>
+                    {% endif %}
                 </ul>
 
                 <!-- LOGO -->
