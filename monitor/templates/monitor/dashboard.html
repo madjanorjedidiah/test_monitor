@@ -11,8 +11,6 @@
 	            <thead>
 	                <tr>
 	                    <th>Name</th>
-	                    <th>Email</th>
-	                    <th>Phone Number</th>
 	                    <th>User Role</th>	                    
 	                </tr>
 	            </thead>
@@ -20,8 +18,6 @@
 	            	{% for a in data_table %}
 	                <tr class="clickable" id={{sb_list.pk}}>
 	                    <td>{{a.first_name}} {{a.last_name}}</td>
-	                    <td>{{a.email}}</td>
-	                    <td>{{a.contact}}</td>
 	                    <td>{{a.account_type}}</td>
 	                </tr>
 	                {% endfor %}
@@ -44,13 +40,10 @@
 		                </tr>
 		            </thead>
 		            <tbody>  
-		            {% for key, value in role.items %}                                       
-		            	<tr>
-		                	<td>{{key}}</td>
-		                	<td> {{value}} </td>
-		                </tr>
-		                
-		            {% endfor %}
+		            <tr>
+	                	<td>{{role}}</td>
+	                	<td> {{role}} </td>
+	                </tr>
 		            </tbody>
 		        </table>
 		    </div>

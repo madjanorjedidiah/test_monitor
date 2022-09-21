@@ -3,6 +3,6 @@
 <label class="col-md-12"> Select the courses assigned to you </label>
 {% for a in all_course %}
 <div></div>
-<input type="checkbox" value="{{a.id}}" name="courses" style="width:20px; height:15px"> <a>&nbsp {{a.course_name}} - {{a.course_code}}</a>
+<input type="checkbox" value="{{a.id}}" name="courses" {% if a.id in student_course.course_fk %} checked {%else%} {% endif%} style="width:20px; height:15px"> <a>&nbsp {{a.course_name}} - {{a.course_code}}</a>
 <br>
 {% endfor %}

@@ -4,8 +4,10 @@ from django.contrib.auth.models import AbstractUser
 
 class UserIdentity(AbstractUser):
 	user_type = (('teacher', 'teacher'), ('student', 'student'))
+	gender_type = (('male', 'male'), ('female', 'female'))
 	contact = models.CharField(max_length=13, null=True, blank=True)
 	user_role = models.CharField(choices=user_type, max_length=20)
+	gender = models.CharField(choices=gender_type, max_length=20, null=True, blank=True)
 
 
 class Courses(models.Model):
@@ -29,6 +31,9 @@ class Teachers(models.Model):
 	class Meta:
 		ordering = ('-id',)
 
+	def __str__(self):
+		return str(self.user_fk)
+
 
 class Students(models.Model):
 	level = models.CharField(max_length=4, null=True, blank=True)
@@ -41,7 +46,7 @@ class Students(models.Model):
 		ordering = ('-id',)
 
 	def __str__(self):
-		return self.course_fk
+		return str(self.level)
 
 
 class Question(models.Model):

@@ -25,5 +25,5 @@ urlpatterns = [
     path('get_student_level_courses/<str:level>', views.get_student_level_courses, name='get_student_level_courses'),
     path('student_tests/', views.student_tests, name='student_tests'),
     path('completed_test/', views.completed_test, name='completed_test'),
-    path('results/', views.results, name='results'),
+    path('results/<int:obj_id>', views.results, name='results'),
 	]

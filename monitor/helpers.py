@@ -91,6 +91,7 @@ def is_equal(a, b):
 
 
 
+
 def take_screen_shot(func):
     myscreen = pyautogui.screenshot()
     return myscreen.save(f'{func}.png')
@@ -158,3 +159,7 @@ def mk_directory(name):
 
 def format_seconds(hr):
     return 60 * 60 * hr
+
+
+def format_string(a):
+    return a.replace(" ","")

@@ -18,7 +18,7 @@
 {% block content %}
 <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="col-md-10 col-lg-10 col-xl-10">
                     <div class="card bg-pattern">
 
                         <div class="card-body p-4">
@@ -47,13 +47,17 @@
                                         <div class="row">
                                             {% for a in tests %}
                                             {% for aa in a %}
-                                            <ul  class="col-md-9" style="text-align:left; float: left; list-style: none; width: 100%"> 
+                                            <ul  class="col-md-7" style="text-align:left; float: left; list-style: none; width: 100%"> 
                                                 <li>Question Title:  {{aa.question_title}} </li>
                                                 <li>Course Name:  {{aa.course_fk.course_name}} </li>
                                                 <li>Course Code:  {{aa.course_fk.course_code}}</li>
                                             </ul>
-                                            <div class="col-md-3 text-center align-self-center" style="width: 100%; background-color: blue; padding: 15px; border-radius: 5px; float: right; ">
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: blue; padding: 15px; border-radius: 5px; float: right; ">
                                                 <a href="#" class="test_button" id="{{aa.id}}"  style="color: white;"> {% if aa.schedule.date_scheduled %} Opening date: {{aa.schedule.date_scheduled}} {% elif aa.schedule.show_now == 'open' %} Opened {% else %} Closed {% endif %} </a>
+                                            </div>
+                                            <p style="width:20px;"> </p>
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #45b35d; padding: 15px; border-radius: 5px; float: right; ">
+                                                <a href="{% url 'results' aa.id %}" class="test_button2" id=""  style="color: white;"> View Results </a>
                                             </div>
                                             {% endfor %}
                                             {% endfor %}

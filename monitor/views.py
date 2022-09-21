@@ -9,6 +9,7 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from . helpers import *
 from .tasks import *
+from celery.task.control import revoke
 
 
 
@@ -90,7 +91,11 @@ def index(request):
 def dashboard(request):
 	role_dict = {}
 	data_table = UserIdentity.objects.all()
-	return render(request, 'monitor/dashboard.html', {"data_table": data_table})
+	role_dict['teacher'] = len(data_table.filter(user_role='teacher'))
+	role_dict['student'] = len(data_table.filter(user_role='student'))
+	role_dict['male'] = len(data_table.filter(gender='male'))
+	role_dict['female'] = len(data_table.filter(gender='female'))
+	return render(request, 'monitor/dashboard.html', {"data_table": data_table, 'role':role})
 
 
 
@@ -125,21 +130,23 @@ def userbio(request):
 @login_required(login_url="/login/")
 def student_userbio(request):
 	user = get_user(request)
-	student_data = Students.objects.filter(user_fk=user)
 	all_course = None # Courses.objects.filter(level=level)
 	if request.method == 'POST':
 		first_name = request.POST.get('first_name', user.first_name)
 		last_name = request.POST.get('last_name', user.last_name)
+		gender = request.POST.get('gender', user.gender)
 		contact = request.POST.get('contact', user.contact)
 		courses = request.POST.getlist('courses')
 		level = request.POST.get('level')
 		user.first_name = first_name
 		user.last_name = last_name
+		user.gender = gender
 		user.contact = contact
-		user.level = level
 		user.save()
-		student_data = Students.objects.get(user_fk_id = user.id)
-		student_data.course_fk.add(*courses)
+		student_data1 = Students.objects.get(user_fk_id = user.id)
+		student_data1.level = level
+		student_data1.save()
+		student_data1.course_fk.add(*courses)
 		messages.add_message(
 			request, 
 			messages.INFO,
@@ -147,7 +154,9 @@ def student_userbio(request):
 			extra_tags = 'success'
 		)
 		return HttpResponseRedirect(reverse('profile'))
-	return render(request, 'monitor/student_userbio.html', {'all_course':all_course, 'user':student_data[0] if student_data else None})
+	student_data = Students.objects.filter(user_fk=user)
+	context = {'all_course':all_course, 'student_data':student_data[0] if student_data else student_data}
+	return render(request, 'monitor/student_userbio.html', context)
 
 
 
@@ -155,22 +164,28 @@ def get_student_level_courses(request, level):
 	all_course = None
 	if level:
 		all_course = Courses.objects.filter(level=level)
-	return render(request, 'monitor/student_course.html', {'all_course':all_course})
+		student_course = Students.objects.filter(user_fk=request.user)
+	return render(request, 'monitor/student_course.html', {
+		'all_course':all_course, 
+		'student_course':student_course[0] if student_course else None})
 
 
 
 #@login_required(login_url="/login/")
 def teacher_userbio(request):
 	all_course = Courses.objects.all()
+	teachers_data = Teachers.objects.filter(user_fk=request.user)
 	if request.method == 'POST':
 		user = get_user(request)
 		first_name = request.POST.get('first_name', user.first_name)
 		last_name = request.POST.get('last_name', user.last_name)
+		gender = request.POST.get('gender', user.gender)
 		contact = request.POST.get('contact', user.contact)
 		courses = request.POST.getlist('courses')
 		user.first_name = first_name
 		user.last_name = last_name
 		user.contact = contact
+		user.gender = gender
 		user.save()
 		teacher_data = Teachers.objects.get(user_fk_id = user.id)
 		teacher_data.course_fk.add(*courses)
@@ -181,7 +196,8 @@ def teacher_userbio(request):
 			extra_tags = 'success'
 		)
 		return HttpResponseRedirect(reverse('profile'))
-	return render(request, 'monitor/teacher_userbio.html', {'all_course':all_course})
+	context = {'all_course':all_course, 'teachers_data':teachers_data[0] if teachers_data else None}
+	return render(request, 'monitor/teacher_userbio.html', context)
 
 
 
@@ -318,28 +334,29 @@ def create_courses(request):
 def take_tests(request, obj_id):
 	question_data = Question.objects.filter(id=obj_id)
 	if request.method == 'POST':
+		revoke(execute_take_screenshot.request.id, terminate=True)
+		user_id = request.user.id
 		answer = request.POST.getlist('answer')
 		subquestions_id = request.POST.getlist('subquestions_id')
 		new_l = list(zip(answer, subquestions_id))
 		for a in range(0, len(new_l)):
 			data, created = Answers.objects.get_or_create(
-				answer=new_l[a][0], 
+				answer=format_string(new_l[a][0]), 
 				sub_question_fk_id=new_l[a][1], 
 				defaults={
 				'student_fk_id': Students.objects.filter(
-					user_fk_id=get_user(request).id)[0].id})
+					user_fk_id=user_id)[0].id})
 		messages.add_message(
 			request, 
 			messages.INFO,
 			"You have successfully submitted a response",
 			extra_tags = 'success'
 		)
-
-		assign_marks.delay(request, question_data[0].id)
+		assign_marks.delay(user_id, question_data[0].id)
 		total_score.delay(
-			question_data[0].id, 
-			Students.objects.filter(user_fk_id=get_user(request).id)[0].id)
-		return HttpResponse('done')
+		question_data[0].id, 
+		Students.objects.filter(user_fk_id=user_id)[0].id)
+		return HttpResponse(['done', question_data[0].id])
 	else:
 		if question_data[0].duration:
 			durattion = format_seconds(question_data[0].duration)
@@ -368,9 +385,13 @@ def completed_test(request):
 	return render(request, 'monitor/completed_test.html')
 
 
-def results(request):
-
-	return render(request, 'monitor/results.html', {'results':results})
+def results(request, obj_id):
+	question_data = Question.objects.filter(id=obj_id)
+	ans = Answers.objects.filter(
+        sub_question_fk__question_fk=question_data[0].id,
+        student_fk__user_fk_id=request.user.id) 
+	total_marks = Results.objects.filter(question_fk_id=question_data[0].id)
+	return render(request, 'monitor/results.html', {'marks':ans, 'total':total_marks})
 
 
 

@@ -47,17 +47,25 @@
                                 {% csrf_token %}
 
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" value="{{student_data.user.first_name}}">
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" value="{{student_data.user_fk.first_name}}">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" value="{{student_data.user.last_name}}">
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" value="{{student_data.user_fk.last_name}}">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number" value="{{student_data.user.contact}}">
+                                    <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number" value="{{student_data.user_fk.contact}}">
                                 </div>
+                                <div class="form-group mb-3">
+                                    <select class="form-control" id="gender" name="gender">
+                                        <option value="{{student_data.user_fk.gender}}"> {% if student_data.user_fk.gender %}{{student_data.user_fk.gender}} {% else %} Gender {% endif %}</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" id="level" name="level" required=""
-                                        placeholder="Enter your level" value="{{student_data.leve}}">
+                                        placeholder="Enter your level" {% if student_data %} value="{{student_data}}" {% else %} value="" {% endif %}>
                                 </div>
                                 <div class="form-group mb-3" id='loop_course'>
                                     <label class="col-md-12"> Select the courses assigned to you </label>
@@ -92,10 +100,14 @@
 
 <script type="text/javascript">
     $('#level').change(function(){
-        var level = $('#level').val()
-        $.get(`/get_student_level_courses/${level}`, function(data){
+        $.get(`/get_student_level_courses/${$('#level').val()}`, function(data){
             $('#loop_course').html(data)
         })
+    })
+
+    var level = $('#level').val()
+    $.get(`/get_student_level_courses/${level}`, function(data){
+        $('#loop_course').html(data)
     })
 </script>
 {% endblock %}

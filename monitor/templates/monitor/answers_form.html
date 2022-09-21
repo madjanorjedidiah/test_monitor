@@ -149,8 +149,8 @@
             headers: {'X-CSRFToken': token},
             data : $('#form1').serialize(),
             success : function(data) {
-               if(data=="done"){ 
-                    location.href = '/completed_test/'
+               if(data.slice(0,4)=="done"){ 
+                    location.href = '/completed_test/?data='+data.slice(4,)
                }
             }
         })  
