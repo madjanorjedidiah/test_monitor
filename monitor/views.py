@@ -7,7 +7,9 @@ from django.contrib import messages
 from django.urls import reverse
 from .forms import *
 from django.contrib.auth.decorators import login_required
-from . helpers import get_user, format_multiple_answers
+from . helpers import *
+from .tasks import *
+
 
 
 def signup(request):
@@ -18,7 +20,11 @@ def signup(request):
 		password = request.POST.get('password')
 		confirm_password = request.POST.get('confirm_password')
 		if password == confirm_password:
-			user, created = UserIdentity.objects.get_or_create(username=username.lower(), email=email.lower(), user_role=user_role)
+			user, created = UserIdentity.objects.get_or_create(
+				username=username.lower(), 
+				email=email.lower(), 
+				user_role=user_role
+			)
 			if created:
 				user.set_password(password)
 				user.save()
@@ -119,13 +125,14 @@ def userbio(request):
 @login_required(login_url="/login/")
 def student_userbio(request):
 	user = get_user(request)
+	student_data = Students.objects.filter(user_fk=user)
 	all_course = None # Courses.objects.filter(level=level)
 	if request.method == 'POST':
-		first_name = request.POST.get('first_name')
-		last_name = request.POST.get('last_name')
-		contact = request.POST.get('contact')
-		level = request.POST.get('level')
+		first_name = request.POST.get('first_name', user.first_name)
+		last_name = request.POST.get('last_name', user.last_name)
+		contact = request.POST.get('contact', user.contact)
 		courses = request.POST.getlist('courses')
+		level = request.POST.get('level')
 		user.first_name = first_name
 		user.last_name = last_name
 		user.contact = contact
@@ -140,7 +147,7 @@ def student_userbio(request):
 			extra_tags = 'success'
 		)
 		return HttpResponseRedirect(reverse('profile'))
-	return render(request, 'monitor/student_userbio.html', {'all_course':all_course})
+	return render(request, 'monitor/student_userbio.html', {'all_course':all_course, 'user':student_data[0] if student_data else None})
 
 
 
@@ -157,9 +164,9 @@ def teacher_userbio(request):
 	all_course = Courses.objects.all()
 	if request.method == 'POST':
 		user = get_user(request)
-		first_name = request.POST.get('first_name')
-		last_name = request.POST.get('last_name')
-		contact = request.POST.get('contact')
+		first_name = request.POST.get('first_name', user.first_name)
+		last_name = request.POST.get('last_name', user.last_name)
+		contact = request.POST.get('contact', user.contact)
 		courses = request.POST.getlist('courses')
 		user.first_name = first_name
 		user.last_name = last_name
@@ -237,13 +244,17 @@ def develop_questions(request):
 		correct_answer = request.POST.getlist('correct_answer')
 		diviser = request.POST.get('diviser')
 		level = request.POST.get('level')
+		duration = request.POST.get('duration')
 		course_code = request.POST.get('course_code')
+		date_scheduled = request.POST.get('date_scheduled')
+		show_now = request.POST.get('show_now')
 		multi_ans = format_multiple_answers(diviser, multiple_answers)
 		ziped = list(zip(question, multi_ans, correct_answer))
 		if course == None:
 			course = Courses.objects.filter(level=level, course_code=course_code)
 		ques_data, created = Question.objects.get_or_create(
 			question_title=question_title, 
+			duration=duration,
 			teacher_fk_id=Teachers.objects.get(user_fk=get_user(request)).id, 
 			course_fk_id=course[0].id if course else course)
 		if created:
@@ -256,6 +267,11 @@ def develop_questions(request):
 						'correct_answer': ziped[a][2]
 					}
 				)
+			if show_now or date_scheduled:
+				ScheduleTest.objects.create(
+					date_scheduled=date_scheduled if is_date(date_scheduled) else None, 
+					show_now=show_now, 
+					question_fk_id=ques_data.id)
 			messages.add_message(
 				request, 
 				messages.INFO,
@@ -280,7 +296,13 @@ def create_courses(request):
 		level = request.POST.get('level')
 		course_code = request.POST.get('course_code')
 		semester = request.POST.get('semester')
-		data, created = Courses.objects.get_or_create(course_name=course_name, course_code=course_code, defaults={'level': level, 'semester': semester})
+		data, created = Courses.objects.get_or_create(
+			course_name=course_name, 
+			course_code=course_code, 
+			defaults={
+			'level': level, 
+			'semester': semester
+		})
 		if created:
 			messages.add_message(
 				request, 
@@ -293,35 +315,47 @@ def create_courses(request):
 
 
 # ///////////  take in candidate answers
-def get_responses(request):
-	obj_id = request.GET.get('data')
+def take_tests(request, obj_id):
 	question_data = Question.objects.filter(id=obj_id)
 	if request.method == 'POST':
-		answer = request.POST.get('answer')
-		subquestions_id = request.POST.get('subquestions_id')
-		data, created = Answers.objects.get_or_create(answer=answer, question_fk_id=subquestions_id, defaults={'student_fk_id': get_user(request).id})
-		if created:
-			messages.add_message(
-				request, 
-				messages.INFO,
-				"You have successfully submitted a response",
-				extra_tags = 'success'
-			)
+		answer = request.POST.getlist('answer')
+		subquestions_id = request.POST.getlist('subquestions_id')
+		new_l = list(zip(answer, subquestions_id))
+		for a in range(0, len(new_l)):
+			data, created = Answers.objects.get_or_create(
+				answer=new_l[a][0], 
+				sub_question_fk_id=new_l[a][1], 
+				defaults={
+				'student_fk_id': Students.objects.filter(
+					user_fk_id=get_user(request).id)[0].id})
+		messages.add_message(
+			request, 
+			messages.INFO,
+			"You have successfully submitted a response",
+			extra_tags = 'success'
+		)
+
+		assign_marks.delay(request, question_data[0].id)
+		total_score.delay(
+			question_data[0].id, 
+			Students.objects.filter(user_fk_id=get_user(request).id)[0].id)
+		return HttpResponse('done')
+	else:
+		if question_data[0].duration:
+			durattion = format_seconds(question_data[0].duration)
+			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
+		else:
+			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
 	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 
 
-## /////////  render marks for candidate
-
-
-# //////////  
-
-
 def student_tests(request):
-	courses = Students.objects.values_list('course_fk', flat=True)
-	tests = [Question.objects.get(course_fk_id=a) for a in list(courses)]
-	print(tests)
-	return render(request, 'monitor/all_courses.html', {'courses': tests})
+	user = get_user(request)
+	if user.user_role == 'student':
+		courses = Students.objects.filter(user_fk=user).values_list('course_fk', flat=True)
+		tests = [Question.objects.filter(course_fk_id=a) for a in list(courses)]
+	return render(request, 'monitor/student_tests.html', {'tests': tests})
 
 
 
@@ -330,5 +364,13 @@ def all_courses(request):
 
 
 
-# def all_courses(request):
-# 	return render(request, 'monitor/all_courses.html', {'courses':Courses.objects.all()})
+def completed_test(request):
+	return render(request, 'monitor/completed_test.html')
+
+
+def results(request):
+
+	return render(request, 'monitor/results.html', {'results':results})
+
+
+

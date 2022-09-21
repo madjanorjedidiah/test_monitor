@@ -46,6 +46,7 @@ class Students(models.Model):
 
 class Question(models.Model):
 	question_title = models.CharField(max_length=200, null=True, blank=True)
+	duration = models.IntegerField(null=True, blank=True)
 	teacher_fk = models.ForeignKey(Teachers, on_delete=models.CASCADE)
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
 	course_fk = models.ForeignKey(Courses, on_delete=models.CASCADE)
@@ -67,7 +68,7 @@ class SubQuestions(models.Model):
 
 
 	class Meta:
-		ordering = ('-id',)
+		ordering = ('id',)
 
 	def __str__(self):
 		return self.question
@@ -75,13 +76,14 @@ class SubQuestions(models.Model):
 
 class Answers(models.Model):
 	answer = models.CharField(max_length=1000, null=True, blank=True)
+	marks = models.IntegerField(null=True, blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
-	question_fk = models.ForeignKey(SubQuestions, on_delete=models.CASCADE)
+	sub_question_fk = models.ForeignKey(SubQuestions, on_delete=models.CASCADE)
 	student_fk = models.ForeignKey(Students, on_delete=models.CASCADE)
 
 
 	class Meta:
-		ordering = ('-id',)
+		ordering = ('id',)
 
 	def __str__(self):
 		return self.answer
@@ -91,5 +93,12 @@ class Answers(models.Model):
 class ScheduleTest(models.Model):
 	show = (('open', 'open'), ('close', 'close'))
 	date_scheduled = models.DateTimeField(null=True, blank=True)
-	show_now = models.CharField(choices=show, default='close')
-	question_fk = models.OneToOneField(Question, on_delete=models.CASCADE)
+	show_now = models.CharField(max_length=10, choices=show, default='close')
+	question_fk = models.OneToOneField(Question, on_delete=models.CASCADE, related_name='schedule')
+
+
+
+class Results(models.Model):
+	question_fk = models.ForeignKey(Question, on_delete=models.CASCADE)
+	score = models.IntegerField(null=True, blank=True)
+	student_fk = models.ForeignKey(Students, on_delete=models.CASCADE)

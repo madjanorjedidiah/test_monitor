@@ -32,7 +32,7 @@
                                     </a>
                                 </div>
 
-                                <h2 class="text-muted mb-1 mt-3"> All QUESTIONS </h2>
+                                <h2 class="text-muted mb-1 mt-3"> All TESTS </h2>
                             </div>
 
 
@@ -41,23 +41,23 @@
                                     <form></form>
                                     <div class="col-lg-12 col-sm-12" style="height: 100%;">
                                         <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
-                                            My Questions
+                                            My TESTS
                                         </p>
-                                        <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%; background-color: white; color:white;">
-                                            {% for a in data %}
-                                            <li>
-                                                <a class="header-cta__button ques_class" style="background-color: black; color:white;" id="{{a.id}}" href="#apply{{a.id}}"> 
-                                                    <span style="text-align:left; float: left;">
-                                                    Question Title:  {{a.question_title}} <br>
-                                                    Course Name:  {{a.course_fk.course_name}} <br>
-                                                    Course Code:  {{a.course_fk.course_code}}
-                                                    </span>
-                                                </a>
-                                                <a href="" id="{{a.id}}">  </a>
-                                            </li>
-                                            <a href="/responses/?data={{a.id}}" style="width: 100%; text-align: left; background-color: green; padding: 5px; color: white;">&nbsp&nbsp Submitted Responses</a>
+
+                                        <div class="row">
+                                            {% for a in tests %}
+                                            {% for aa in a %}
+                                            <ul  class="col-md-9" style="text-align:left; float: left; list-style: none; width: 100%"> 
+                                                <li>Question Title:  {{aa.question_title}} </li>
+                                                <li>Course Name:  {{aa.course_fk.course_name}} </li>
+                                                <li>Course Code:  {{aa.course_fk.course_code}}</li>
+                                            </ul>
+                                            <div class="col-md-3 text-center align-self-center" style="width: 100%; background-color: blue; padding: 15px; border-radius: 5px; float: right; ">
+                                                <a href="#" class="test_button" id="{{aa.id}}"  style="color: white;"> {% if aa.schedule.date_scheduled %} Opening date: {{aa.schedule.date_scheduled}} {% elif aa.schedule.show_now == 'open' %} Opened {% else %} Closed {% endif %} </a>
+                                            </div>
                                             {% endfor %}
-                                        </ul>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                           </div>
@@ -74,5 +74,16 @@
 <script type="text/javascript">
     
 
+var buts = document.getElementsByClassName('test_button')
+for (var a=0; a<buts.length; a++){
+    buts[a].addEventListener('click', function(e){
+        e.preventDefault()
+        if (this.click){
+            if (this.innerText ===  'Opened'){
+               location.href = `/take_tests/${this.id}`
+           }            
+        }
+    })
+}
 </script>
 {% endblock %}

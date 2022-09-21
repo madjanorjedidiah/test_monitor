@@ -1,9 +1,26 @@
 {% extends "monitor/base.html"%}
 {% load static%}
+{% load string_format %}
 
 
 {% block css %}
+
     <link rel="stylesheet" type="text/css" href="/static/monitor/css/question_index.css">
+    <style type="text/css">
+        input[type="radio"]{
+            -webkit-appearance: radio;
+        }
+
+        .rad {
+            width: auto;  
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+        .inp_text {
+            margin-top: 5px;
+        }
+    </style>
+
 {% endblock %}
 
 
@@ -50,44 +67,46 @@
 
                             <div>
                                 <label id="ques_title"> Question Title </label>
-                                <input type="text" name="question_title" class="form-control" value="{{question_data.0.question_title}}" readonly>
+                                <input type="text" name="question_title" class="question_title form-control" id="{{question_data.0.id}}" value="{{question_data.0.question_title}}" readonly>
                             </div>
                             <div class="row col-md-12 level_semester ">
                                 <input type="text" name="level" class="form-control col-md-4" value="{{question_data.0.level}}" placeholder="Level" readonly>
-                                <p class="col-md-4"> </p>
+                                <!-- <p class="col-md-4"> </p> -->
                                 <input type="text" name="course_code" class="form-control col-md-4 float-right" value="{{question_data.0.course_code}}" placeholder="Course code" readonly>
+                                <input type="text" name="duration" class="form-control col-md-4 float-right" value="{{question_data.0.duration}}" placeholder="Course code" readonly>
                             </div>                            
                             <br>
                         </div>
                     </div> <!-- end card-body -->
                 </div>
 
-                {% for aa in question_data.subquestions_set.all %}
+                {% for aa in question_data.0.subquestions_set.all %}
                 <div class="card bg-pattern mainsection1" id="mainsection1">
                     <div class="card-body p-4 row">
                         <div class="col-md-12">
                             <input type="text" name="question" class="form-control" value="{{aa.question}}" placeholder="Question" readonly>
+                            <input type="text" name="subquestions_id" class="d-none" value="{{aa.id}}" placeholder="Question" readonly>
                         </div>
                         <div id="" class="type_of_quuestions">
                                 {% if aa.multiple_answers %}
-                                {% for bb in aa.multiple_answers %}
+                                {% with list1=aa.multiple_answers|string_filter %}
+                                {% for bb in list1 %}
                             <div class="options_div_container">
                                 <div class="row options_div" id="">
-                                    <input type="radio" name="answer" class="checkbx form-control" value="{{bb}}">
-                                    <input type="text" name="multiple_answers" value="{{bb}}" class="multiple_text_input multiple_answers col-md-10" readonly>
+                                    <input type="checkbox" name="answer" class="rad chkbx{{aa.id}}" value="{{bb}}">
+                                    <input type="text" name="multiple_answers" value="{{bb}}" class="multiple_text_input multiple_answers inp_text col-md-10" readonly>
                                 </div>
                             </div>
                             {% endfor %}
+                            {% endwith %}
                             {% else %}
-                            <input type="text" name="answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">
+                            <input type="text" name="answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer choice here" style="margin-top: 10px;">
                             {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-
-            <input type="text" name="diviser" id="diviser" class="d-none">  <!-- hidden input for the diviser  -->
 
             <div class="col-md-10 col-lg-10 col-xl-8">
                 <div class="card bg-pattern ques_buts">
@@ -105,20 +124,39 @@
 
 <script type="text/javascript">
 
+    var class_name;
+    var chbx_class = document.getElementsByClassName('rad')
+    for (var a = 0; a < chbx_class.length; a++){
+        chbx_class[a].addEventListener('click', function() {
+            if (this.click){
+                class_name = this.getAttribute('class')
+                for (a in document.getElementsByClassName(class_name)){
+                    document.getElementsByClassName(class_name)[a].checked = false
+                }  
+                this.checked = true 
+            }
+        })
+    }
+
+
     //  submit form
+    var que_id = document.getElementsByClassName('question_title')
     document.getElementById('save').onclick = function() {
         token = '{{ csrf_token }}'
         $.ajax({
-            url  : '/develop_questions/',
+            url  : '/take_tests/'+que_id[0].id,
             type : 'POST',
             headers: {'X-CSRFToken': token},
             data : $('#form1').serialize(),
             success : function(data) {
                if(data=="done"){ 
-
+                    location.href = '/completed_test/'
                }
             }
         })  
     }
+
+
+
 </script>
 {% endblock %}

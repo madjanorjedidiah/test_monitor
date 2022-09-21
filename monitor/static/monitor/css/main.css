@@ -149,9 +149,9 @@ body::before{
 #two:checked ~ .button .two{
   width: 35px;
 }
-input[type="radio"]{
+/*input[type="radio"]{
   display: none;
-}
+}*/
 @media (max-width: 768px) {
   .main-card .cards .card{
     margin: 20px 0 10px 0;

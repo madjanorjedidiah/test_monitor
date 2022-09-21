@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'test_monitor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.contrib.gis.db.backends.postgis',
+        'ENGINE':'django.db.backends.postgresql_psycopg2',
         'HOST':'localhost',
         'USER':'postgres',
         'NAME':'monitor',
@@ -95,6 +95,17 @@ DATABASES = {
         'PASSWORD':'postgres1234'
     }
 }
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ.get('HOST')
+EMAIL_HOST_USER = os.environ.get('USER_MAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('PASSWORD')
+EMAIL_PORT = os.environ.get('PORT')
+
+
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'amqp://'
 
 
 AUTH_USER_MODEL = 'monitor.UserIdentity'

@@ -54,8 +54,9 @@
                             </div>
                             <div class="row col-md-12 level_semester ">
                                 <input type="text" name="level" class="form-control col-md-4" value="{{course_data.level}}" placeholder="Level">
-                                <p class="col-md-4"> </p>
+                                <!-- <p class="col-md-4"> </p> -->
                                 <input type="text" name="course_code" class="form-control col-md-4 float-right" value="{{course_data.course_code}}" placeholder="Course code">
+                                <input type="text" name="duration" class="form-control col-md-4 float-right" value="{{course_data.duration}}" placeholder="Duration (hrs)">
                             </div>                            
                             <br>
                         </div>
@@ -88,27 +89,33 @@
                             </div>
                             <button class="add_option_but" id="add_option_but" type="button"> add option </button>
                             <br><br>
-                            <input type="text" name="correct_answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">
-
-                            <br><br>
-                            <div>
-                                <a href=""></a>
-                            </div>
-                            <div>
-                                <input type="date" name="date_scheduled" placeholder="Schedule a date">
-                                OR
-                                <select name="show_now">
-                                    <option value="show"> Make it accessible now </option>
-                                    <option value="close"> Close test </option>
-                                </select>
-                            </div>
-                            
+                            <input type="text" name="correct_answer" value="" class='multiple_text_input col-md-12' placeholder="Put the correct answer_choice here">                            
                         </div>
                     </div>
                 </div>
             </div>
 
             <input type="text" name="diviser" id="diviser" class="d-none">  <!-- hidden input for the diviser  -->
+
+            <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="card bg-pattern ques_buts">
+                    <div class="card-body">
+                        <p style="padding: 5px; margin-left: -10px; background-color: #2170ff; width: 300px; color: white;">
+                            <a href="#applyll" data-toggle="collapse" aria-expanded="true" aria-controls="applyll" style="color:white"> Schedule time for the Test (Optional)</a>
+                        </p>
+                        
+                        <div class="row col-md-12" id="applyll" class="collapse" style="background-color: #7a7a81; color:black; padding: 5px;">
+                            <span class="col-md-3"> Schedule a date: </span>
+                            <input type="date" name="date_scheduled" class="form-control col-md-4" placeholder="Schedule a date">
+                            <span class="col-md-1">  OR  </span>
+                            <select name="show_now" class="col-md-4">
+                                <option value="open"> Make it accessible now </option>
+                                <option value="close"> Close test </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col -->
 
             <div class="col-md-10 col-lg-10 col-xl-8">
                 <div class="card bg-pattern ques_buts">

@@ -47,20 +47,17 @@
                                 {% csrf_token %}
 
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="first_name" name="first_name" required=""
-                                        placeholder="Enter your first name">
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" value="{{student_data.user.first_name}}">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="last_name" name="last_name" required=""
-                                        placeholder="Enter your last name">
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" value="{{student_data.user.last_name}}">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="text" class="form-control" id="contact" name="contact" required=""
-                                        placeholder="Enter your phone number">
+                                    <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number" value="{{student_data.user.contact}}">
                                 </div>
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" id="level" name="level" required=""
-                                        placeholder="Enter your level">
+                                        placeholder="Enter your level" value="{{student_data.leve}}">
                                 </div>
                                 <div class="form-group mb-3" id='loop_course'>
                                     <label class="col-md-12"> Select the courses assigned to you </label>
@@ -97,7 +94,6 @@
     $('#level').change(function(){
         var level = $('#level').val()
         $.get(`/get_student_level_courses/${level}`, function(data){
-            alert(data)
             $('#loop_course').html(data)
         })
     })

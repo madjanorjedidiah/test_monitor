@@ -1,4 +1,21 @@
 from .models import *
+from dateutil.parser import parse
+from django.http import HttpResponse
+from django.db.models import Sum
+import pyautogui
+import time
+from datetime import datetime
+import smtplib
+from os.path import basename
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import os
+from dotenv import load_dotenv
+
+
+# Load dotenv
+load_dotenv()
 
 
 def get_user(request,):
@@ -42,3 +59,102 @@ def format_multiple_answers(diviser: str, lists: list):
             new_list.append(lists[c:int(a)+int(c)])
             c += int(a)
     return new_list
+
+
+
+def is_date(string, fuzzy=False):
+    """
+    Return whether the string can be interpreted as a date.
+
+    :param string: str, string to check for date
+    :param fuzzy: bool, ignore unknown tokens in string if True
+    """
+    try: 
+        parse(string, fuzzy=fuzzy)
+        return True
+
+    except ValueError:
+        return False
+
+
+def distribute_marks_for_each_question(ques_id):
+    question = Question.objects.filter(id=ques_id)
+    if question:
+        su_ques_lenght = len(question[0].subquestions_set.all())
+        return round(100 / su_ques_lenght, 0)
+    return None
+
+
+
+def is_equal(a, b):
+    return True if a.lower() == b.lower() else False
+
+
+
+def take_screen_shot(func):
+    myscreen = pyautogui.screenshot()
+    return myscreen.save(f'{func}.png')
+
+
+
+def wait_time(sec=None):
+    if sec == None:
+        sec = 2
+    return time.sleep(sec)
+
+
+
+def current_time():
+    now = datetime.now()
+    current_time = now.strftime('%H:%M:%S')
+    return current_time
+
+
+
+def send_mail(send_to, subject, text, text_name, file=None):
+    msg = MIMEMultipart()
+    msg['From'] = os.environ.get('USER')
+    msg['To'] = send_to
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(text))
+
+    ff = open(file, "rb")
+    part = MIMEApplication(
+        ff.read(),
+        Name=basename(file)
+    )
+    # After the file is closed
+    part['Content-Disposition'] = 'attachment; filename="%s"' % text_name+'.png'
+    msg.attach(part)
+    server = smtplib.SMTP(os.environ.get('HOST'), os.environ.get('PORT'))
+    server.starttls()
+    server.login(os.environ.get('USER_MAIL'), os.environ.get('PASSWORD'))
+    server.sendmail(os.environ.get('USER_MAIL'), send_to, msg.as_string())
+    server.close()
+    return 'email_sent'
+
+
+
+def mk_directory(name):
+    # Determine output directory
+    output_folder = "/home/jed/Desktop/apps/django/test_monitor/monitor/static/monitor/screenshots"
+
+    # Create a new folder called 'Results' 
+    result_folder = os.path.join(output_folder, name)
+
+    # Check if the folder exists already
+    if not os.path.exists(result_folder):
+        
+        print("Creating a folder for the results..")
+        # If it does not exist, create one
+        os.makedirs(result_folder)
+        print(result_folder, "folder created")  
+    else:
+        print("Results folder exists already.")
+    return result_folder
+
+
+
+def format_seconds(hr):
+    return 60 * 60 * hr
