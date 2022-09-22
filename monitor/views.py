@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from . helpers import *
 from .tasks import *
 from celery.task.control import revoke
+from django.db.models import Max, Avg, Count, Min, Sum
 
 
 
@@ -89,13 +90,38 @@ def index(request):
 
 @login_required(login_url="/login/")
 def dashboard(request):
-	role_dict = {}
+	role_dict, gender_dict, scores, course_student, course_score = {}, {}, {}, {}, {}
 	data_table = UserIdentity.objects.all()
 	role_dict['teacher'] = len(data_table.filter(user_role='teacher'))
 	role_dict['student'] = len(data_table.filter(user_role='student'))
-	role_dict['male'] = len(data_table.filter(gender='male'))
-	role_dict['female'] = len(data_table.filter(gender='female'))
-	return render(request, 'monitor/dashboard.html', {"data_table": data_table, 'role':role})
+	gender_dict['male'] = len(data_table.filter(gender='male'))
+	gender_dict['female'] = len(data_table.filter(gender='female'))
+	questions_served = Question.objects.count()
+	answers_served = Answers.objects.count()
+	res = Results.objects.all()
+	scores['max'] = res.aggregate(Max('score'))['score__max']
+	scores['min'] = res.aggregate(Min('score'))['score__min']
+	course = res.values('question_fk__course_fk__course_code').annotate(num_students=Count('student_fk_id'))
+	max_stu = course.aggregate(Max('num_students'))['num_students__max']
+	min_stu = course.aggregate(Min('num_students'))['num_students__min']
+	course_student['course_with_max_students'] = course.filter(num_students=max_stu)[0]
+	course_student['course_with_min_students'] = course.filter(num_students=min_stu)[0]
+	sum_course = res.values('question_fk__course_fk__course_code').annotate(sum_score=Sum('score'))
+	high_course_score = sum_course.aggregate(Max('sum_score'))['sum_score__max']
+	low_course_score = sum_course.aggregate(Min('sum_score'))['sum_score__min']
+	course_score['course_with_high_scores'] = sum_course.filter(sum_score=high_course_score)[0]
+	course_score['course_with_low_scores'] = sum_course.filter(sum_score=low_course_score)[0]
+	context = {
+	"data_table": data_table, 
+	'role':role_dict, 
+	'gender':gender_dict,
+	'questions_served': questions_served,
+	'answers_served': answers_served,
+	'scores': scores,
+	"course_student":course_student,
+	'course_score': course_score
+	}
+	return render(request, 'monitor/dashboard.html', context)
 
 
 
@@ -359,8 +385,10 @@ def take_tests(request, obj_id):
 		if question_data[0].duration:
 			durattion = format_seconds(question_data[0].duration)
 			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
+			execute_web_cam_capture.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
 		else:
 			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
+			execute_web_cam_capture.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
 	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 

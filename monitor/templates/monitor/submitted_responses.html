@@ -43,7 +43,7 @@
                                                 <li>Course Name:  {{data.0.question_fk.course_fk.course_name}} </li>
                                                 <li>Course Code:  {{data.0.question_fk.course_fk.course_code}}</li>
                                             </ul>
-                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #45b35d; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
                                                 <a href="#" class="test_button2" id="{{a.0.user_student.id}}"  style="color: white;"> Total Submitted <br><span style="font-size:22px;">{{data|length}}</span> </a>
                                             </div>
                                             <br>
@@ -54,7 +54,7 @@
                                                 <li>Student:  {{a.student_fk.user_fk.first_name}} {{a.student_fk.user_fk.last_name}} </li>
                                             </ul>
                                             
-                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #45b35d; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
                                                 <a href="{% url 'teacher_results' a.question_fk.id a.student_fk.id %}" class="test_button2" id="{{a.0.user_student.id}}"  style="color: white;"> View Results </a>
                                             </div>
                                             {% endfor %}

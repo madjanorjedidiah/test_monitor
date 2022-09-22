@@ -52,7 +52,7 @@
                                                 <li>Course Name:  {{aa.course_fk.course_name}} </li>
                                                 <li>Course Code:  {{aa.course_fk.course_code}}</li>
                                             </ul>
-                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: blue; padding: 15px; border-radius: 5px; float: right; ">
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 15px; border-radius: 5px; float: right; ">
                                                 <a href="#" class="test_button" id="{{aa.id}}"  style="color: white;"> {% if aa.schedule.date_scheduled %} Opening date: {{aa.schedule.date_scheduled}} {% elif aa.schedule.show_now == 'open' %} Opened {% else %} Closed {% endif %} </a>
                                             </div>
                                             <p style="width:20px;"> </p>

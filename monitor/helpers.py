@@ -163,3 +163,19 @@ def format_seconds(hr):
 
 def format_string(a):
     return a.replace(" ","")
+
+
+
+def web_cam_capture(name):
+    cam = cv2.VideoCapture(0)
+    result, image = cam.read()  
+
+    # show the image
+    if result:
+        cv2.imshow(name, image)
+
+        # save the image
+        cv2.imwrite(f"{name}.png", image)
+    else:
+        print("No image detected. Please! try again")  
+    return True 
