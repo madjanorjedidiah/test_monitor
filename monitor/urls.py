@@ -20,10 +20,11 @@ urlpatterns = [
     path('teacher_profile/', views.teacher_userbio, name='teacher_profile'),
     path('courses/', views.create_courses, name='courses'),
     path('all_courses/', views.all_courses, name='all_courses'),
-    path('responses/', views.submitted_responses, name='responses'),
+    path('responses/<int:obj_id>', views.submitted_responses, name='responses'),
     path('take_tests/<int:obj_id>', views.take_tests, name='take_tests'),
     path('get_student_level_courses/<str:level>', views.get_student_level_courses, name='get_student_level_courses'),
     path('student_tests/', views.student_tests, name='student_tests'),
     path('completed_test/', views.completed_test, name='completed_test'),
     path('results/<int:obj_id>', views.results, name='results'),
+    path('teacher_results/<int:ques_id>/<int:student_id>', views.teacher_view_results, name='teacher_results'),
 	]

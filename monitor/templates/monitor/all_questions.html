@@ -45,7 +45,7 @@
                                         <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%; background-color: white; color:white;">
                                             {% for a in data %}
                                             <li>
-                                                <a class="header-cta__button ques_class" style="background-color: black; color:white;" id="{{a.id}}" href="#apply{{a.id}}"  data-toggle="collapse"> 
+                                                <a class="header-cta__button ques_class" style="background-color: #2e60f5; color:white;" id="{{a.id}}" href="#apply{{a.id}}"  data-toggle="collapse"> 
                                                     <span style="text-align:left; float: left;">
                                                     Question Title:  {{a.question_title}} <br>
                                                     Course Name:  {{a.course_fk.course_name}} <br>
@@ -76,7 +76,7 @@
                                                     <br>
                                                 {% endfor %}
                                             </div>
-                                            <a href="/responses/?data={{a.id}}" style="width: 100%; text-align: left; background-color: green; padding: 5px; color: white;">&nbsp&nbsp Submitted Responses</a>
+                                            <a href="/responses/{{a.id}}" style="width: 100%; text-align: left; background-color: green; padding: 5px; color: white;">&nbsp&nbsp Submitted Responses</a>
                                             {% endfor %}
                                         </ul>
                                     </div>

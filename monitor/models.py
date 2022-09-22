@@ -10,6 +10,7 @@ class UserIdentity(AbstractUser):
 	gender = models.CharField(choices=gender_type, max_length=20, null=True, blank=True)
 
 
+
 class Courses(models.Model):
 	level = models.CharField(max_length=4, null=True, blank=True)
 	semester = models.CharField(max_length=4, null=True, blank=True)
@@ -22,6 +23,7 @@ class Courses(models.Model):
 		return self.course_name
 
 
+
 class Teachers(models.Model):
 	user_fk = models.OneToOneField(UserIdentity, on_delete=models.CASCADE, related_name='user_teacher')
 	created_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -32,7 +34,8 @@ class Teachers(models.Model):
 		ordering = ('-id',)
 
 	def __str__(self):
-		return str(self.user_fk)
+		return self.user_fk
+
 
 
 class Students(models.Model):
@@ -47,6 +50,7 @@ class Students(models.Model):
 
 	def __str__(self):
 		return str(self.level)
+
 
 
 class Question(models.Model):
@@ -64,6 +68,7 @@ class Question(models.Model):
 		return self.question_title
 
 
+
 class SubQuestions(models.Model):
 	question = models.CharField(max_length=1000, null=True, blank=True)
 	multiple_answers = models.CharField(max_length=1000, null=True, blank=True)
@@ -77,6 +82,7 @@ class SubQuestions(models.Model):
 
 	def __str__(self):
 		return self.question
+
 
 
 class Answers(models.Model):
@@ -107,3 +113,4 @@ class Results(models.Model):
 	question_fk = models.ForeignKey(Question, on_delete=models.CASCADE)
 	score = models.IntegerField(null=True, blank=True)
 	student_fk = models.ForeignKey(Students, on_delete=models.CASCADE)
+	# is_completed = models.CharField(max_length=20, blank=True, default='uncompleted')

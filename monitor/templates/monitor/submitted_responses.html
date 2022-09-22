@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="col-md-10 col-lg-10 col-xl-10">
                     <div class="card bg-pattern">
 
                         <div class="card-body p-4">
@@ -28,39 +28,44 @@
                             </div>
 
 
-                            <div>
+                             <div>
                                 <div class="row">
+                                    <form></form>
                                     <div class="col-lg-12 col-sm-12" style="height: 100%;">
                                         <p style="padding:5px; text-align: center; color: white; font-weight: bold; font-size: 20px;">
-                                            Responses
+                                            RESPONSES
                                         </p>
-                                        <ul class="header-cta grid-y" style="gap: 0.5rem; height: 100%; background-color: #f7f5f5;">
+
+                                        <div class="row">
+                                            <h3> Course Question Details</h3>
+                                            <ul  class="col-md-9" style="text-align:left; float: left; list-style: none; width: 100%"> 
+                                                <li>Question Title:  {{data.0.question_fk.question_title}} </li>
+                                                <li>Course Name:  {{data.0.question_fk.course_fk.course_name}} </li>
+                                                <li>Course Code:  {{data.0.question_fk.course_fk.course_code}}</li>
+                                            </ul>
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #45b35d; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
+                                                <a href="#" class="test_button2" id="{{a.0.user_student.id}}"  style="color: white;"> Total Submitted <br><span style="font-size:22px;">{{data|length}}</span> </a>
+                                            </div>
+                                            <br>
+
+                                            <h3> Submitted Students</h3>
                                             {% for a in data %}
-                                            <li>
-                                                <a class="header-cta__button ques_class" style="background-color: #00d0ff;" id="{{a.id}}" href="#apply{{a.id}}"  data-toggle="collapse"> 
-                                                    <span style="text-align:left; float: left;">
-                                                        Student:  {{a.student_fk.user_fk.first_name}} {{a.student_fk.user_fk.last_name}} 
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <div id="apply{{a.id}}" class="collapse">
-                                                    <div style="margin-left: 18px;">
-                                                        <span>
-                                                            {{a.answer}} <br>
-                                                        </span>
-                                                    </div>
-                                                    <br>
+                                            <ul  class="col-md-9" style="text-align:left; float: left; list-style: none; width: 100%"> 
+                                                <li>Student:  {{a.student_fk.user_fk.first_name}} {{a.student_fk.user_fk.last_name}} </li>
+                                            </ul>
+                                            
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #45b35d; padding: 15px; border-radius: 5px; float: right; margin-top: -30px;">
+                                                <a href="{% url 'teacher_results' a.question_fk.id a.student_fk.id %}" class="test_button2" id="{{a.0.user_student.id}}"  style="color: white;"> View Results </a>
                                             </div>
                                             {% endfor %}
-                                        </ul>
+                                        </div>
                                     </div>
                                 </div>
-                          </div>
                         </div> <!-- end card-body -->
                     </div>
                 </div> <!-- end col -->
             </div>
-            <!-- end row -->
+            <!-- end row -->    
         </div>
 
 
@@ -68,12 +73,16 @@
 
 <script type="text/javascript">
     
-    // $(document).ready(function(){
-
-    //     $('.ques_class').on('click', function(){
-    //         var idd = $(this).id
-    //         location.href = '/question_details/' + idd
+    // var buts = document.getElementsByClassName('test_button')
+    // for (var a=0; a<buts.length; a++){
+    //     buts[a].addEventListener('click', function(e){
+    //         e.preventDefault()
+    //         if (this.click){
+    //             if (this.innerText ===  'Opened'){
+    //                location.href = `/take_tests/${this.id}`
+    //            }            
+    //         }
     //     })
-    // })
+    // }
 </script>
 {% endblock %}

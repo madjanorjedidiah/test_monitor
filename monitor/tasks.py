@@ -71,7 +71,6 @@ def capture_images():
 
         # save the image
         imwrite("GeeksForGeeks.png", image)
-
     else:
         print("No image detected. Please! try again")   
 

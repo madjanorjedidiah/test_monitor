@@ -37,10 +37,11 @@
     // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
     let value = params.data; // "some_value"
 
+
     document.getElementById('anc').addEventListener('click', function(e){
         e.preventDefault()
-        alert(value)
         location.href = '/results/'+value
     })
+
 </script>
 {% endblock %}

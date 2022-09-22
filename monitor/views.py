@@ -237,13 +237,9 @@ def all_question(request):
 
 
 
-def submitted_responses(request):
-	obj_id = request.GET.get('data')
-	user = get_user(request)
-	data = None
-	if user.user_role == 'teacher':
-		data = Answers.objects.filter(question_fk_id=obj_id)
-	return render(request, 'monitor/submitted_responses.html', {'data':data})
+def submitted_responses(request, obj_id):
+	submitted = Results.objects.filter(question_fk_id=obj_id)
+	return render(request, 'monitor/submitted_responses.html', {'data':submitted})
 
 
 
@@ -332,6 +328,8 @@ def create_courses(request):
 
 # ///////////  take in candidate answers
 def take_tests(request, obj_id):
+	if Results.objects.filter(question_fk_id=obj_id):
+		return HttpResponseRedirect(reverse('student_tests'))
 	question_data = Question.objects.filter(id=obj_id)
 	if request.method == 'POST':
 		revoke(execute_take_screenshot.request.id, terminate=True)
@@ -395,3 +393,10 @@ def results(request, obj_id):
 
 
 
+def teacher_view_results(request, student_id, ques_id):
+	question_data = Question.objects.filter(id=ques_id)
+	ans = Answers.objects.filter(
+        sub_question_fk__question_fk=question_data[0].id,
+        student_fk=student_id) 
+	total_marks = Results.objects.filter(question_fk_id=question_data[0].id)
+	return render(request, 'monitor/results.html', {'marks':ans, 'total':total_marks})
