@@ -9,7 +9,7 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from . helpers import *
 from .tasks import *
-from celery.task.control import revoke
+from test_monitor.celery import app as celery_app
 from django.db.models import Max, Avg, Count, Min, Sum
 
 
@@ -358,7 +358,7 @@ def take_tests(request, obj_id):
 		return HttpResponseRedirect(reverse('student_tests'))
 	question_data = Question.objects.filter(id=obj_id)
 	if request.method == 'POST':
-		revoke(execute_take_screenshot.request.id, terminate=True)
+		celery_app.control.revoke(execute_monitor.request.id, terminate=True, signal='SIGKILL')
 		user_id = request.user.id
 		answer = request.POST.getlist('answer')
 		subquestions_id = request.POST.getlist('subquestions_id')
@@ -384,11 +384,9 @@ def take_tests(request, obj_id):
 	else:
 		if question_data[0].duration:
 			durattion = format_seconds(question_data[0].duration)
-			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
-			execute_web_cam_capture.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
+			execute_monitor.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
 		else:
-			execute_take_screenshot.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
-			execute_web_cam_capture.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
+			execute_monitor.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
 	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 

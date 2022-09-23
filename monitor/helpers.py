@@ -12,6 +12,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
 from dotenv import load_dotenv
+import cv2
+from psutil import Process
+import base64
+import json  
+from test_monitor.celery import app as celery_app
+
+
 
 
 # Load dotenv
@@ -100,7 +107,7 @@ def take_screen_shot(func):
 
 def wait_time(sec=None):
     if sec == None:
-        sec = 2
+        sec = 8
     return time.sleep(sec)
 
 
@@ -172,10 +179,9 @@ def web_cam_capture(name):
 
     # show the image
     if result:
-        cv2.imshow(name, image)
-
         # save the image
-        cv2.imwrite(f"{name}.png", image)
+        cv2.imwrite(f"{name}_snapshot.png", image)
     else:
         print("No image detected. Please! try again")  
     return True 
+

@@ -104,8 +104,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('PASSWORD')
 EMAIL_PORT = os.environ.get('PORT')
 
 
-CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_RESULT_BACKEND = 'amqp://'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 
 AUTH_USER_MODEL = 'monitor.UserIdentity'

@@ -5,11 +5,12 @@ from .helpers import send_mail, current_time, wait_time, take_screen_shot, mk_di
 import time
 from django.db.models import Sum
 from .models import *
+import cv2
 
 
 
 @shared_task
-def execute_take_screenshot(student_user, duration=60, sec=None):
+def execute_monitor(student_user, duration=60, sec=None):
     directory = mk_directory(student_user)
     start_time = time.time()
     elapsed = 0
@@ -23,9 +24,17 @@ def execute_take_screenshot(student_user, duration=60, sec=None):
             student_user, 
             'Current Screenshots', 
             now, 
-            f'{os.path.join(directory, now)}_screen.png'
+            f'{os.path.join(directory, now)}.png'
         )
         wait_time(sec)
+        web_cam_capture(os.path.join(directory, now))
+        send_email = send_mail(
+            'jmadjanor6@gmail.com', 
+            student_user, 
+            'Current Screenshots', 
+            now, 
+            f'{os.path.join(directory, now)}.png'
+        )
         if sec:
             wait += sec
             elapsed = elapsed - wait
@@ -45,7 +54,7 @@ def assign_marks(user_id, ques_id):
         else:
             all_answers[aa].marks = 0
             all_answers[aa].save()
-    return True
+    return 'done'
 
 
 
@@ -57,29 +66,6 @@ def total_score(ques_id, student_id):
         score=tot_score['marks__sum'], 
         student_fk_id=student_id
     )
-    return True
-
-
-
-@shared_task
-def execute_web_cam_capture(student_user, duration=60, sec=None):
-    directory = mk_directory(student_user)
-    start_time = time.time()
-    elapsed = 0
-    wait = 0
-    while elapsed < duration:
-        elapsed = time.time() - start_time
-        now = current_time()
-        web_cam_capture(os.path.join(directory, now))
-        send_email = send_mail(
-            'jmadjanor6@gmail.com', 
-            student_user, 
-            'Current Screenshots', 
-            now, 
-            f'{os.path.join(directory, now)}_snap.png'
-        )
-        wait_time(sec)
-        if sec:
-            wait += sec
-            elapsed = elapsed - wait
     return 'done'
+
+
