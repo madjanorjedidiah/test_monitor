@@ -1,15 +1,16 @@
-# staff_records_app
+# Test Monitoring App
 
-This is an app to take the records of staff members in an organization. 
+This is an app that allows teachers to set questions and students to answer those questions. It bridges the gap between teachers and students and 
+automatically computes the marks for the taken test.
 
 
 ## Scope
 
 It comes with the following:
-- Admin page 	
-- Profile page
+- Profile page 	
+- Courses page
 - Dashboard page.
-- Authntication pages
+- Questions pages
 
 
 ## Run
