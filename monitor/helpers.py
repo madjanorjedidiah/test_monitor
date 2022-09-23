@@ -2,7 +2,6 @@ from .models import *
 from dateutil.parser import parse
 from django.http import HttpResponse
 from django.db.models import Sum
-import pyautogui
 import time
 from datetime import datetime
 import smtplib
@@ -17,14 +16,13 @@ from psutil import Process
 import base64
 import json  
 from test_monitor.celery import app as celery_app
+from PIL import ImageGrab
 
 
 
 
 # Load dotenv
 load_dotenv()
-os.environ['DISPLAY'] = ':0'
-os.environ['XAUTHORITY']='/run/user/1000/gdm/Xauthority'
 
 
 def get_user(request,):
@@ -102,7 +100,7 @@ def is_equal(a, b):
 
 
 def take_screen_shot(func):
-    myscreen = pyautogui.screenshot()
+    myscreen = ImageGrab.grab()  #pyautogui.screenshot()
     return myscreen.save(f'{func}.png')
 
 
