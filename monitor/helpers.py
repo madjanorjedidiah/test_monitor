@@ -23,6 +23,8 @@ from test_monitor.celery import app as celery_app
 
 # Load dotenv
 load_dotenv()
+os.environ['DISPLAY'] = ':0'
+os.environ['XAUTHORITY']='/run/user/1000/gdm/Xauthority'
 
 
 def get_user(request,):
