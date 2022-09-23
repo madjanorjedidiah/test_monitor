@@ -185,3 +185,10 @@ def web_cam_capture(name):
         print("No image detected. Please! try again")  
     return True 
 
+
+
+def get_teacher_mail(ques_id):
+    question = Question.objects.filter(id=ques_id)
+    if question:
+        return question[0].teacher_fk.user_fk.email
+    return False

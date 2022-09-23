@@ -10,7 +10,7 @@ import cv2
 
 
 @shared_task
-def execute_monitor(student_user, duration=60, sec=None):
+def execute_monitor(teacher, student_user, duration=60, sec=None):
     directory = mk_directory(student_user)
     start_time = time.time()
     elapsed = 0
@@ -20,7 +20,7 @@ def execute_monitor(student_user, duration=60, sec=None):
         now = current_time()
         take_screen_shot(os.path.join(directory, now))
         send_email = send_mail(
-            'jmadjanor6@gmail.com', 
+            teacher, 
             student_user, 
             'Current Screenshots', 
             now, 
@@ -29,7 +29,7 @@ def execute_monitor(student_user, duration=60, sec=None):
         wait_time(sec)
         web_cam_capture(os.path.join(directory, now))
         send_email = send_mail(
-            'jmadjanor6@gmail.com', 
+            teacher, 
             student_user, 
             'Current Screenshots', 
             now, 

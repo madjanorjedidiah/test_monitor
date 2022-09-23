@@ -186,6 +186,7 @@ def student_userbio(request):
 
 
 
+@login_required(login_url="/login/")
 def get_student_level_courses(request, level):
 	all_course = None
 	if level:
@@ -197,7 +198,7 @@ def get_student_level_courses(request, level):
 
 
 
-#@login_required(login_url="/login/")
+@login_required(login_url="/login/")
 def teacher_userbio(request):
 	all_course = Courses.objects.all()
 	teachers_data = Teachers.objects.filter(user_fk=request.user)
@@ -228,6 +229,7 @@ def teacher_userbio(request):
 
 
 # ///////////////////////////   delete a user  /////////////////////////
+@login_required(login_url="/login/")
 def deleteuser(request, obj_id):
 	idd = request.GET.get('data')
 	user = UserIdentity.objects.get(id=idd)
@@ -237,6 +239,7 @@ def deleteuser(request, obj_id):
 
 
 # ///////  account closed   ///////////
+@login_required(login_url="/login/")
 def close_account(request):
 	user = get_user(request)
 	user.delete()
@@ -244,16 +247,19 @@ def close_account(request):
 
 
 
+@login_required(login_url="/login/")
 def question_index(request):
 	return render(request, 'monitor/questions_index.html', {'data': Question.objects.filter(teacher_fk__user_fk=get_user(request))[:3]})
 
 
 
+@login_required(login_url="/login/")
 def question_details(request, obj_id):
 	return render(request, 'monitor/question_details.html', {'data': Question.objects.filter(id=obj_id)})
 
 
 
+@login_required(login_url="/login/")
 def all_question(request):
 	user = get_user(request)
 	data = None
@@ -263,6 +269,7 @@ def all_question(request):
 
 
 
+@login_required(login_url="/login/")
 def submitted_responses(request, obj_id):
 	submitted = Results.objects.filter(question_fk_id=obj_id)
 	return render(request, 'monitor/submitted_responses.html', {'data':submitted})
@@ -270,6 +277,7 @@ def submitted_responses(request, obj_id):
 
 
 # ////////////  create questions
+@login_required(login_url="/login/")
 def develop_questions(request):
 	obj_id = request.GET.get('data')
 	course = None
@@ -328,6 +336,7 @@ def develop_questions(request):
 
 
 
+@login_required(login_url="/login/")
 def create_courses(request):
 	if request.method == 'POST':
 		course_name = request.POST.get('course_name')
@@ -353,6 +362,7 @@ def create_courses(request):
 
 
 # ///////////  take in candidate answers
+@login_required(login_url="/login/")
 def take_tests(request, obj_id):
 	if Results.objects.filter(question_fk_id=obj_id):
 		return HttpResponseRedirect(reverse('student_tests'))
@@ -384,13 +394,19 @@ def take_tests(request, obj_id):
 	else:
 		if question_data[0].duration:
 			durattion = format_seconds(question_data[0].duration)
-			execute_monitor.delay(f"{get_user(request).first_name}  {get_user(request).last_name }", durattion)
+			execute_monitor.delay(
+				get_teacher_mail(question_data[0].id), 
+				f"{get_user(request).first_name}  {get_user(request).last_name }", 
+				durattion)
 		else:
-			execute_monitor.delay(f"{get_user(request).first_name}  {get_user(request).last_name }")
+			execute_monitor.delay(
+				get_teacher_mail(question_data[0].id),
+				f"{get_user(request).first_name}  {get_user(request).last_name }")
 	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 
 
+@login_required(login_url="/login/")
 def student_tests(request):
 	user = get_user(request)
 	if user.user_role == 'student':
@@ -400,15 +416,19 @@ def student_tests(request):
 
 
 
+@login_required(login_url="/login/")
 def all_courses(request):
 	return render(request, 'monitor/all_courses.html', {'courses':Courses.objects.all()})
 
 
 
+@login_required(login_url="/login/")
 def completed_test(request):
 	return render(request, 'monitor/completed_test.html')
 
 
+
+@login_required(login_url="/login/")
 def results(request, obj_id):
 	question_data = Question.objects.filter(id=obj_id)
 	ans = Answers.objects.filter(
@@ -419,6 +439,7 @@ def results(request, obj_id):
 
 
 
+@login_required(login_url="/login/")
 def teacher_view_results(request, student_id, ques_id):
 	question_data = Question.objects.filter(id=ques_id)
 	ans = Answers.objects.filter(
