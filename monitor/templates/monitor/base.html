@@ -101,10 +101,11 @@
                     <li class="dropdown d-none d-lg-inline-block">
                         <a class="nav-link waves-effect waves-light" href="{% url 'student_tests' %}"> Tests </a>
                     </li>
-                    {% else %}
+                    {% elif user.is_authenticated and user.user_role == 'teacher' %}
                     <li class="dropdown d-none d-lg-inline-block">
                         <a class="nav-link waves-effect waves-light" href="{% url 'question_index' %}"> Questions </a>
                     </li>
+                    {% else %}
                     {% endif %}
                 </ul>
 

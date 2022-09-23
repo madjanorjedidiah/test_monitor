@@ -61,12 +61,14 @@
                                                             {{b.question}}
                                                         </div>
                                                         <div class="ck">
+                                                            {% if b.multiple_answers %}
                                                             Multiple Choice: <br> 
                                                             {% with list1=b.multiple_answers|string_filter %}
                                                             {% for cc in list1 %}
                                                                 <input type="checkbox" name=""> {{cc}}<br>
                                                             {% endfor %}
                                                             {% endwith %}
+                                                            {% endif %}
                                                         </div>
                                                         <div class="ck">
                                                             Answer: <br>
