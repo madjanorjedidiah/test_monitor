@@ -17,6 +17,7 @@ import base64
 import json  
 from test_monitor.celery import app as celery_app
 from PIL import ImageGrab
+from test_monitor.settings import MEDIA_ROOT
 
 
 
@@ -119,7 +120,7 @@ def current_time():
 
 
 
-def send_mail(send_to, subject, text, text_name, file=None):
+def send_mail_image(send_to, subject, text, text_name, file=None):
     msg = MIMEMultipart()
     msg['From'] = os.environ.get('USER')
     msg['To'] = send_to
@@ -145,11 +146,8 @@ def send_mail(send_to, subject, text, text_name, file=None):
 
 
 def mk_directory(name):
-    # Determine output directory
-    output_folder = "/home/jed/Desktop/apps/django/test_monitor/monitor/static/monitor/screenshots"
-
     # Create a new folder called 'Results' 
-    result_folder = os.path.join(output_folder, name)
+    result_folder = os.path.join(MEDIA_ROOT, name)
 
     # Check if the folder exists already
     if not os.path.exists(result_folder):
@@ -192,3 +190,31 @@ def get_teacher_mail(ques_id):
     if question:
         return question[0].teacher_fk.user_fk.email
     return False
+
+
+
+def get_student_results(student_id, ques_id):
+    question_data = Question.objects.filter(id=ques_id)
+    ans = Answers.objects.filter(
+        sub_question_fk__question_fk=question_data[0].id,
+        student_fk=student_id) 
+    total_marks = Results.objects.filter(question_fk_id=question_data[0].id)
+    return (ans, total_marks, student_id)
+
+
+
+def send_mail(send_to, subject, text):
+    msg = MIMEMultipart()
+    msg['From'] = os.environ.get('USER_MAIL')
+    msg['To'] = send_to
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(text))
+
+    # After the file is closed
+    server = smtplib.SMTP(os.environ.get('HOST'), os.environ.get('PORT'))
+    server.starttls()
+    server.login(os.environ.get('USER_MAIL'), os.environ.get('PASSWORD'))
+    server.sendmail(os.environ.get('USER_MAIL'), send_to, msg.as_string())
+    server.close()
+    return 'email_sent'

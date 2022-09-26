@@ -27,7 +27,7 @@
 {% block content %}
 <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-10 col-xl-8">
+                <div class="col-md-10 col-lg-10 col-xl-10">
                     <div class="card bg-pattern">
 
                         <div class="card-body p-4">
@@ -54,14 +54,24 @@
 
                                         <div class="row">
                                             <h3> Test Details </h3>
-                                            <ul  class="col-md-9" style="text-align:left; float: left; list-style: none; width: 100%"> 
+                                            <ul  class="col-md-7" style="text-align:left; float: left; list-style: none; width: 100%"> 
                                                 <li>Question Title:  {{a.0.sub_question_fk.question_fk.question_title}} </li>
                                                 <li>Course Name:  {{a.0.sub_question_fk.question_fk.course_name}} </li>
                                                 <li>Course Code:  {{a.0.sub_question_fk.question_fk.course_code}}</li>
                                             </ul>
-                                            <div class="col-md-3 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 10px; border-radius: 5px; float: right; margin-top: -25px;">
+                                            {% if user.user_role == 'teacher' %}
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 10px; border-radius: 5px; float: right; margin-top: -25px;">
+                                                <a href="{% url 'student_activity' student_id %}" class="test_button" id="{{student_id}}"  style="color: white; font-size:18px"> Student <br>Activity </a>
+                                            </div>
+                                            <p class="" style="width: 2px;"> </p>
+                                            {% else %}
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; padding: 10px; border-radius: 5px; float: right; margin-top: -25px;">
+                                            </div>
+                                            {% endif %}
+                                            <div class="col-md-2 text-center align-self-center" style="width: 100%; background-color: #3283f6; padding: 10px; border-radius: 5px; float: right; margin-top: -25px;">
                                                 <a href="#" class="test_button" id="{{aa.id}}"  style="color: white;"> Total Score<br><span style="font-size:22px;">{{total.0.score}}</span> </a>
                                             </div>
+
                                             
 
                                             <h3> Test Questions and Answers </h3>

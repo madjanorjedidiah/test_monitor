@@ -21,6 +21,8 @@ It comes with the following:
 - Run python manage.py makemigrations
 - Run python manage.py migrate.
 - Run python manage.py runserver
+- Open another terminal and start the redis server.
+- Open a new terminal then type the following in 'celery -A test_monitor worker -l info'
 
 
 Now your app should be running.

@@ -11,6 +11,8 @@ from . helpers import *
 from .tasks import *
 from test_monitor.celery import app as celery_app
 from django.db.models import Max, Avg, Count, Min, Sum
+from test_monitor.settings import MEDIA_ROOT
+from celery import chain
 
 
 
@@ -279,10 +281,11 @@ def submitted_responses(request, obj_id):
 # ////////////  create questions
 @login_required(login_url="/login/")
 def develop_questions(request):
-	obj_id = request.GET.get('data')
-	course = None
+	obj_id, course = request.GET.get('data'), None
 	if obj_id:
 		course = Courses.objects.filter(id=obj_id)
+
+	""" save the questions in the db """
 	if request.method == 'POST':
 		question_title = request.POST.get('question_title')
 		question = request.POST.getlist('question')
@@ -303,6 +306,8 @@ def develop_questions(request):
 			duration=duration,
 			teacher_fk_id=Teachers.objects.get(user_fk=get_user(request)).id, 
 			course_fk_id=course[0].id if course else course)
+
+		""" save sub questions only when main question has been saved """
 		if created:
 			for a in range(0,len(ziped)):
 				SubQuestions.objects.get_or_create(
@@ -313,6 +318,8 @@ def develop_questions(request):
 						'correct_answer': ziped[a][2]
 					}
 				)
+
+				""" save the scheduled informaion """
 			if show_now or date_scheduled:
 				ScheduleTest.objects.create(
 					date_scheduled=date_scheduled if is_date(date_scheduled) else None, 
@@ -364,12 +371,15 @@ def create_courses(request):
 # ///////////  take in candidate answers
 @login_required(login_url="/login/")
 def take_tests(request, obj_id):
+	"""check if results exist before continuing"""
 	if Results.objects.filter(question_fk_id=obj_id):
 		return HttpResponseRedirect(reverse('student_tests'))
 	question_data = Question.objects.filter(id=obj_id)
+
+	"""save answers"""
 	if request.method == 'POST':
-		celery_app.control.revoke(execute_monitor.request.id, terminate=True, signal='SIGKILL')
 		user_id = request.user.id
+		student_obj = Students.objects.filter(user_fk_id=user_id)
 		answer = request.POST.getlist('answer')
 		subquestions_id = request.POST.getlist('subquestions_id')
 		new_l = list(zip(answer, subquestions_id))
@@ -377,31 +387,39 @@ def take_tests(request, obj_id):
 			data, created = Answers.objects.get_or_create(
 				answer=format_string(new_l[a][0]), 
 				sub_question_fk_id=new_l[a][1], 
-				defaults={
-				'student_fk_id': Students.objects.filter(
-					user_fk_id=user_id)[0].id})
+				defaults={'student_fk_id': student_obj[0].id})
 		messages.add_message(
 			request, 
 			messages.INFO,
 			"You have successfully submitted a response",
 			extra_tags = 'success'
 		)
-		assign_marks.delay(user_id, question_data[0].id)
-		total_score.delay(
-		question_data[0].id, 
-		Students.objects.filter(user_fk_id=user_id)[0].id)
+
+		""" calculate the marks and total score in the background"""
+		chain(
+			assign_marks.si(user_id, question_data[0].id),
+			total_score.si(question_data[0].id, student_obj[0].id),
+			send_teacher_results.si(question_data[0].teacher_fk.user_fk.email,
+				question_data[0].teacher_fk.user_fk.first_name,
+				get_user(request).first_name + ' ' + get_user(request).last_name,
+				student_obj[0].id,
+				question_data[0].id
+				)
+		)()
 		return HttpResponse(['done', question_data[0].id])
 	else:
+
+		""" monitor students screen and take snaphots based on the duration """
 		if question_data[0].duration:
 			durattion = format_seconds(question_data[0].duration)
 			execute_monitor.delay(
 				get_teacher_mail(question_data[0].id), 
-				f"{get_user(request).first_name}  {get_user(request).last_name }", 
+				get_user(request).first_name + ' ' + get_user(request).last_name, 
 				durattion)
 		else:
 			execute_monitor.delay(
 				get_teacher_mail(question_data[0].id),
-				f"{get_user(request).first_name}  {get_user(request).last_name }")
+				get_user(request).first_name + ' ' + get_user(request).last_name)
 	return render(request, 'monitor/answers_form.html', {'question_data':question_data})
 
 
@@ -441,9 +459,20 @@ def results(request, obj_id):
 
 @login_required(login_url="/login/")
 def teacher_view_results(request, student_id, ques_id):
-	question_data = Question.objects.filter(id=ques_id)
-	ans = Answers.objects.filter(
-        sub_question_fk__question_fk=question_data[0].id,
-        student_fk=student_id) 
-	total_marks = Results.objects.filter(question_fk_id=question_data[0].id)
-	return render(request, 'monitor/results.html', {'marks':ans, 'total':total_marks})
+	user, data = get_user(request), None
+	if user.user_role == 'teacher':
+		data = get_student_results(student_id, ques_id)
+	return render(request, 'monitor/results.html', {'marks':data[0], 'total':data[1], 'student_id':data[2]})
+
+
+
+def student_activity(request, student_id):
+	user, media_path, files, stud = get_user(request), None, None, None
+	if user.user_role == 'teacher':
+		stud = Students.objects.filter(id=student_id)
+		if stud:
+			stud = stud[0]
+			media_path = os.path.join(MEDIA_ROOT, stud.user_fk.first_name + ' ' + stud.user_fk.last_name)
+			files = os.listdir(media_path)
+			files.sort()
+	return render(request, 'monitor/student_activity.html', {'student_id':student_id, 'files':files, 'student':stud})

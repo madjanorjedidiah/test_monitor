@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+
 class UserIdentity(AbstractUser):
 	user_type = (('teacher', 'teacher'), ('student', 'student'))
 	gender_type = (('male', 'male'), ('female', 'female'))

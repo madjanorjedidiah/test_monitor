@@ -1,11 +1,22 @@
 from celery import shared_task
 import os
 from celery.result import AsyncResult
-from .helpers import send_mail, current_time, wait_time, take_screen_shot, mk_directory, get_user, distribute_marks_for_each_question, is_equal, web_cam_capture
+from .helpers import (current_time, 
+    wait_time, 
+    take_screen_shot, 
+    mk_directory, 
+    get_user, 
+    distribute_marks_for_each_question, 
+    is_equal, 
+    web_cam_capture,
+    get_student_results,
+    send_mail
+    )
 import time
 from django.db.models import Sum
 from .models import *
 import cv2
+
 
 
 
@@ -19,22 +30,8 @@ def execute_monitor(teacher, student_user, duration=60, sec=None):
         elapsed = time.time() - start_time
         now = current_time()
         take_screen_shot(os.path.join(directory, now))
-        send_email = send_mail(
-            teacher, 
-            student_user, 
-            'Current Screenshots', 
-            now, 
-            f'{os.path.join(directory, now)}.png'
-        )
         wait_time(sec)
         web_cam_capture(os.path.join(directory, now))
-        send_email = send_mail(
-            teacher, 
-            student_user, 
-            'Current Screenshots', 
-            now, 
-            f'{os.path.join(directory, now)}.png'
-        )
         if sec:
             wait += sec
             elapsed = elapsed - wait
@@ -69,3 +66,18 @@ def total_score(ques_id, student_id):
     return 'done'
 
 
+@shared_task
+def send_teacher_results(teacher_mail, teacher_name, student_name, student_id, ques_id):
+    student_results = get_student_results(student_id, ques_id)[1][0].score
+    send_mail(
+        teacher_mail,
+        """ Students Results Submitted """,
+        """Dear """+ teacher_name +  """
+    You are receiving this email because """+ student_name + """ has just submitted the test answers. 
+    Find below the graded results for the answers submitted. 
+    Thank you.""" 
+    """ Score: """ +   str(student_results) +"""
+    Click the link to view details of the results, url: teacher_results/""" + f'{ques_id}' + '/' + f'{student_id}'
+    """This is an auto-generated mail and therefore does not require a response. """
+    )
+    return 'done'
