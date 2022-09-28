@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+# Load dotenv
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -78,12 +84,12 @@ WSGI_APPLICATION = 'test_monitor.wsgi.application'
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE':'django.db.backends.postgresql_psycopg2',
-#         'HOST':'localhost',
-#         'USER':'postgres',
-#         'NAME':'monitor',
-#         'PORT':'5432',
-#         'PASSWORD':'postgres1234'
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'HOST': os.environ.get('DB_HOST'),
+#         'PORT': os.environ.get('DB_PORT'),
+#         'NAME': os.environ.get('DB_NAME'),
+#         'USER': os.environ.get('DB_USER'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
 #     }
 # }
 
@@ -107,8 +113,13 @@ EMAIL_HOST_PASSWORD = os.environ.get('PASSWORD')
 EMAIL_PORT = os.environ.get('PORT')
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 
 
 AUTH_USER_MODEL = 'monitor.UserIdentity'
